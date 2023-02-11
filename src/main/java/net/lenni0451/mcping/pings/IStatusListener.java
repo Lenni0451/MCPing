@@ -2,12 +2,35 @@ package net.lenni0451.mcping.pings;
 
 import net.lenni0451.mcping.responses.IPingResponse;
 
+/**
+ * The interface used to listen for the status of a ping.<br>
+ * <br>
+ * Some servers don't respond with a ping which causes this method to not be called.<br>
+ * Make sure to also implement {@link #onResponse(IPingResponse)} if you also the actual response.<br>
+ * If the server does not correctly respond with a ping the {@link #onError(Throwable)} method will be called together with the {@link #onResponse(IPingResponse)} method.
+ */
 public interface IStatusListener {
 
+    /**
+     * Called when the ping failed with an exception.
+     *
+     * @param throwable The thrown exception
+     */
     void onError(final Throwable throwable);
 
+    /**
+     * Called when the server responded with a status message.
+     *
+     * @param pingResponse The response
+     */
     void onResponse(final IPingResponse pingResponse);
 
+    /**
+     * Called when the ping was successful.
+     *
+     * @param pingResponse The response
+     * @param ping         The ping in ms
+     */
     void onPing(final IPingResponse pingResponse, final long ping);
 
 }

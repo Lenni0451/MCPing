@@ -7,12 +7,26 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * A data input stream which can read minecraft specific data types.
+ * Implemented types:
+ * - var int
+ * - var string
+ * - legacy string
+ * - classic string
+ */
 public class MCInputStream extends DataInputStream {
 
     public MCInputStream(final InputStream is) {
         super(is);
     }
 
+    /**
+     * Read a var int from the stream.
+     *
+     * @return The read var int
+     * @throws IOException If an I/O error occurs
+     */
     public int readVarInt() throws IOException {
         int i = 0;
         int j = 0;
@@ -27,7 +41,15 @@ public class MCInputStream extends DataInputStream {
         return i;
     }
 
-    public String readString(final int maxLength) throws IOException {
+    /**
+     * Read a var string from the stream.<br>
+     * This is the string format used by the modern ping protocol (>= 1.7).
+     *
+     * @param maxLength The maximum length of the string
+     * @return The read string
+     * @throws IOException If an I/O error occurs
+     */
+    public String readVarString(final int maxLength) throws IOException {
         int length = this.readVarInt();
         if (length > maxLength * 4) throw new IOException("The received encoded string buffer length is longer than maximum allowed (" + length + " > " + maxLength * 4 + ")");
         if (length < 0) throw new IOException("The received encoded string buffer length is less than zero!");
@@ -39,6 +61,13 @@ public class MCInputStream extends DataInputStream {
         else return string;
     }
 
+    /**
+     * Read a legacy string from the stream.<br>
+     * This is the string format used by the old ping protocol (<= 1.6).
+     *
+     * @return The read string
+     * @throws IOException If an I/O error occurs
+     */
     public String readLegacyString() throws IOException {
         int length = this.readShort();
         if (length < 0) throw new IOException("The received encoded string buffer length is less than zero!");
@@ -48,6 +77,13 @@ public class MCInputStream extends DataInputStream {
         return new String(chars);
     }
 
+    /**
+     * Read a classic string from the stream.<br>
+     * This is the string format used by the classic protocol.
+     *
+     * @return The read string
+     * @throws IOException If an I/O error occurs
+     */
     public String readClassicString() throws IOException {
         byte[] stringBytes = new byte[64];
         char[] chars = new char[stringBytes.length];

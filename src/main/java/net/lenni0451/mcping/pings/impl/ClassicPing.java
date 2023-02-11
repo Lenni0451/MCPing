@@ -13,8 +13,15 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Random;
 
+/**
+ * The ping implementation for the classic edition.<br>
+ * Ping response: {@link ClassicPingResponse}
+ */
 public class ClassicPing extends ATCPPing {
 
+    /**
+     * The CP437 character set used by the classic editions.
+     */
     public static final char[] CP437 = new char[]{
             0x0000, 0x263a, 0x263b, 0x2665, 0x2666, 0x2663, 0x2660, 0x2022, 0x25d8, 0x25cb,
             0x25d9, 0x2642, 0x2640, 0x266a, 0x266b, 0x263c, 0x25ba, 0x25c4, 0x2195, 0x203c,
@@ -59,7 +66,7 @@ public class ClassicPing extends ATCPPing {
 
     @Override
     public void ping(ServerAddress serverAddress, IStatusListener statusListener) {
-        try (Socket s = this.connect(serverAddress, this.getDefaultPort())) {
+        try (Socket s = this.connect(serverAddress)) {
             MCInputStream is = new MCInputStream(s.getInputStream());
             MCOutputStream os = new MCOutputStream(s.getOutputStream());
 

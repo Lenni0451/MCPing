@@ -1,5 +1,10 @@
 package net.lenni0451.mcping.responses;
 
+import net.lenni0451.mcping.pings.impl.ClassicPing;
+
+/**
+ * The response of a {@link ClassicPing}.
+ */
 public class ClassicPingResponse implements IPingResponse {
 
     public String name;

@@ -1,5 +1,10 @@
 package net.lenni0451.mcping.responses;
 
+import net.lenni0451.mcping.pings.impl.BedrockPing;
+
+/**
+ * The response of a {@link BedrockPing}.
+ */
 public class BedrockPingResponse implements IPingResponse {
 
     public String descriptionLine1;

@@ -1,7 +1,13 @@
 package net.lenni0451.mcping.responses;
 
+import net.lenni0451.mcping.pings.impl.LegacyPing;
+import net.lenni0451.mcping.pings.impl.ModernPing;
+
 import java.util.Arrays;
 
+/**
+ * The response of a {@link ModernPing} and {@link LegacyPing}.
+ */
 public class MCPingResponse implements IPingResponse {
 
     public String description;

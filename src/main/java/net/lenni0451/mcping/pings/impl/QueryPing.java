@@ -14,6 +14,10 @@ import java.net.DatagramSocket;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
+/**
+ * The ping implementation for the query ping protocol.<br>
+ * Ping response: {@link QueryPingResponse}
+ */
 public class QueryPing extends AUDPPing {
 
     private static final byte[] MAGIC_BYTES = {(byte) 0xFE, (byte) 0xFD};
@@ -38,7 +42,7 @@ public class QueryPing extends AUDPPing {
             int sessionId = (this.rnd.nextInt((0x7FFFFFFF - 0x1) + 1) + 0x1) & 0x0F0F0F0F;
             int[] challengeToken = new int[1];
 
-            this.writePacket(s, serverAddress, this.getDefaultPort(), packetOs -> {
+            this.writePacket(s, serverAddress, packetOs -> {
                 packetOs.write(MAGIC_BYTES);
                 packetOs.write(9);
                 packetOs.writeInt(sessionId);
@@ -63,7 +67,7 @@ public class QueryPing extends AUDPPing {
 
     private void requestQuery(final DatagramSocket s, final ServerAddress serverAddress, final IStatusListener statusListener, final int sessionId, final int challengeToken) throws IOException {
         PingReference pingReference = new PingReference();
-        this.writePacket(s, serverAddress, this.getDefaultPort(), packetOs -> {
+        this.writePacket(s, serverAddress, packetOs -> {
             packetOs.write(MAGIC_BYTES);
             packetOs.write(0);
             packetOs.writeInt(sessionId);
@@ -110,7 +114,7 @@ public class QueryPing extends AUDPPing {
 
     private void requestFullQuery(final DatagramSocket s, final ServerAddress serverAddress, final IStatusListener statusListener, final int sessionId, final int challengeToken) throws IOException {
         PingReference pingReference = new PingReference();
-        this.writePacket(s, serverAddress, this.getDefaultPort(), packetOs -> {
+        this.writePacket(s, serverAddress, packetOs -> {
             packetOs.write(MAGIC_BYTES);
             packetOs.write(0);
             packetOs.writeInt(sessionId);

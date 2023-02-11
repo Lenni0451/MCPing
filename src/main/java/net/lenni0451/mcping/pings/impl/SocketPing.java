@@ -11,6 +11,10 @@ import net.lenni0451.mcping.stream.MCOutputStream;
 
 import java.net.Socket;
 
+/**
+ * The ping implementation for the socket ping.<br>
+ * Ping response: {@link SocketPingResponse}
+ */
 public class SocketPing extends ATCPPing {
 
     public SocketPing(final int connectTimeout) {
@@ -26,7 +30,7 @@ public class SocketPing extends ATCPPing {
     public void ping(ServerAddress serverAddress, IStatusListener statusListener) {
         PingReference pingReference = new PingReference();
         pingReference.start();
-        try (Socket ignored = this.connect(serverAddress, 25565)) {
+        try (Socket ignored = this.connect(serverAddress)) {
             pingReference.stop();
             JsonObject ping = new JsonObject();
             this.prepareResponse(serverAddress, ping);

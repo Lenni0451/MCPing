@@ -1,7 +1,12 @@
 package net.lenni0451.mcping.responses;
 
+import net.lenni0451.mcping.pings.impl.QueryPing;
+
 import java.util.Arrays;
 
+/**
+ * The response of a {@link QueryPing}.
+ */
 public class QueryPingResponse implements IPingResponse {
 
     public String description;

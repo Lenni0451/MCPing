@@ -18,43 +18,99 @@ import java.util.function.Function;
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class MCPing<R extends IPingResponse> {
 
+    /**
+     * Ping a server using the modern ping protocol.<br>
+     * Defaults to protocol version 47.
+     *
+     * @return The modern ping builder
+     */
     public static MCPing<MCPingResponse> pingModern() {
         return pingModern(47);
     }
 
+    /**
+     * Ping a server using the modern ping protocol.
+     *
+     * @param protocolVersion The protocol version to use
+     * @return The modern ping builder
+     */
     public static MCPing<MCPingResponse> pingModern(final int protocolVersion) {
         return new MCPing<>(ping -> new ModernPing(ping.connectTimeout, ping.readTimeout, protocolVersion));
     }
 
 
+    /**
+     * Ping a server using the legacy ping protocol.<br>
+     * Defaults to the protocol version of the given version ({@link LegacyPing.Version#getDefaultId()}).
+     *
+     * @param version The version of the protocol
+     * @return The legacy ping builder
+     */
     public static MCPing<MCPingResponse> pingLegacy(final LegacyPing.Version version) {
         return pingLegacy(version, version.getDefaultId());
     }
 
+    /**
+     * Ping a server using the legacy ping protocol.
+     *
+     * @param version         The version of the protocol
+     * @param protocolVersion The protocol version to use
+     * @return The legacy ping builder
+     */
     public static MCPing<MCPingResponse> pingLegacy(final LegacyPing.Version version, final int protocolVersion) {
         return new MCPing<>(ping -> new LegacyPing(ping.connectTimeout, ping.readTimeout, version, protocolVersion));
     }
 
 
+    /**
+     * Ping a server using the classic protocol.<br>
+     * <b>This visibly connects a client to the server causing a disconnect message.</b>
+     *
+     * @param version The version of the protocol
+     * @return The classic ping builder
+     */
     public static MCPing<ClassicPingResponse> pingClassic(final ClassicPing.Version version) {
         return new MCPing<>(ping -> new ClassicPing(ping.connectTimeout, ping.readTimeout, version));
     }
 
 
+    /**
+     * Ping a server using the query protocol.<br>
+     * Defaults to full query.
+     *
+     * @return The query ping builder
+     */
     public static MCPing<QueryPingResponse> pingQuery() {
         return pingQuery(true);
     }
 
+    /**
+     * Ping a server using the query protocol.
+     *
+     * @param full Whether to use full query or not
+     * @return The query ping builder
+     */
     public static MCPing<QueryPingResponse> pingQuery(final boolean full) {
         return new MCPing<>(ping -> new QueryPing(ping.readTimeout, full));
     }
 
 
+    /**
+     * Ping a server using the bedrock protocol.
+     *
+     * @return The bedrock ping builder
+     */
     public static MCPing<BedrockPingResponse> pingBedrock() {
         return new MCPing<>(ping -> new BedrockPing(ping.readTimeout));
     }
 
 
+    /**
+     * Ping a server using a socket.<br>
+     * This just connects a socket and measures the time it takes to connect.
+     *
+     * @return The socket ping builder
+     */
     public static MCPing<SocketPingResponse> pingSocket() {
         return new MCPing<>(ping -> new SocketPing(ping.readTimeout));
     }
@@ -74,21 +130,50 @@ public class MCPing<R extends IPingResponse> {
         this.ping = ping;
     }
 
-    public MCPing<R> address(final String ip) {
-        this.serverAddress = ServerAddress.parse(ip, this.ping.apply(this).getDefaultPort());
+    /**
+     * Set the address of the server to ping.<br>
+     * See {@link ServerAddress#parse(String, int)} for more information.
+     *
+     * @param address The string representation of the address and/or port
+     * @return This builder
+     */
+    public MCPing<R> address(final String address) {
+        this.serverAddress = ServerAddress.parse(address, this.ping.apply(this).getDefaultPort());
         return this;
     }
 
-    public MCPing<R> address(final String ip, final int port) {
-        this.serverAddress = ServerAddress.of(ip, port, this.ping.apply(this).getDefaultPort());
+    /**
+     * Set the address of the server to ping.<br>
+     * See {@link ServerAddress#of(String, int, int)} for more information.
+     *
+     * @param host The host of the server
+     * @param port The port of the server
+     * @return This builder
+     */
+    public MCPing<R> address(final String host, final int port) {
+        this.serverAddress = ServerAddress.of(host, port, this.ping.apply(this).getDefaultPort());
         return this;
     }
 
+    /**
+     * Set the address of the server to ping.
+     *
+     * @param serverAddress The server address
+     * @return This builder
+     */
     public MCPing<R> address(final ServerAddress serverAddress) {
         this.serverAddress = serverAddress;
         return this;
     }
 
+    /**
+     * Set the address of the server to ping.<br>
+     * If the address is an {@link InetSocketAddress} the host and port will be used.<br>
+     * Otherwise, the address will be parsed using {@link ServerAddress#parse(String, int)}.
+     *
+     * @param address The socket address
+     * @return This builder
+     */
     public MCPing<R> address(final SocketAddress address) {
         if (address instanceof InetSocketAddress) {
             InetSocketAddress socketAddress = (InetSocketAddress) address;
@@ -98,20 +183,45 @@ public class MCPing<R extends IPingResponse> {
         }
     }
 
+    /**
+     * Set the address of the server to ping.<br>
+     * The host will be resolved using {@link InetAddress#getHostAddress()}.
+     *
+     * @param address The inet address
+     * @return This builder
+     */
     public MCPing<R> address(final InetAddress address) {
         return this.address(address.getHostAddress());
     }
 
+    /**
+     * Set the address to be resolved.
+     *
+     * @return This builder
+     */
     public MCPing<R> resolve() {
         this.resolve = true;
         return this;
     }
 
+    /**
+     * Set the address to not be resolved.
+     *
+     * @return This builder
+     */
     public MCPing<R> noResolve() {
         this.resolve = false;
         return this;
     }
 
+    /**
+     * Set the connect and read timeout.<br>
+     * Not all ping implementations require both timeouts.
+     *
+     * @param connectTimeout The connect timeout
+     * @param readTimeout    The read timeout
+     * @return This builder
+     */
     public MCPing<R> timeout(final int connectTimeout, final int readTimeout) {
         this.connectTimeout = connectTimeout;
         this.readTimeout = readTimeout;
@@ -119,27 +229,59 @@ public class MCPing<R extends IPingResponse> {
     }
 
 
+    /**
+     * Set the ping status listener.
+     *
+     * @param statusListener The status listener
+     * @return This builder
+     */
     public MCPing<R> handler(final IStatusListener statusListener) {
         this.statusListener = statusListener;
         return this;
     }
 
+    /**
+     * Set a dedicated exception handler.
+     *
+     * @param exceptionHandler The exception handler
+     * @return This builder
+     */
     public MCPing<R> exceptionHandler(final Consumer<Throwable> exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
         return this;
     }
 
+    /**
+     * Set a dedicated response handler.
+     *
+     * @param responseHandler The response handler
+     * @return This builder
+     */
     public MCPing<R> responseHandler(final Consumer<R> responseHandler) {
         this.responseHandler = responseHandler;
         return this;
     }
 
+    /**
+     * Set a dedicated finish handler.
+     *
+     * @param finishHandler The finish handler
+     * @return This builder
+     */
     public MCPing<R> finishHandler(final Consumer<R> finishHandler) {
         this.finishHandler = finishHandler;
         return this;
     }
 
 
+    /**
+     * Get the ping response synchronously.<br>
+     * If no status listener or exception handler is set, any exception will be thrown.<br>
+     * If a listener is set, null will be returned.
+     *
+     * @return The ping response
+     * @throws RuntimeException If no status listener or exception handler is set and an exception occurs
+     */
     public R getSync() {
         CompletableFuture<R> future = new CompletableFuture<>();
         if (this.resolve) this.serverAddress.resolve();
@@ -153,10 +295,23 @@ public class MCPing<R extends IPingResponse> {
         return null;
     }
 
+    /**
+     * Get a completable future for the ping response.<br>
+     * The ping will be executed in a separate thread and started immediately.
+     *
+     * @return The completable future
+     */
     public CompletableFuture<R> getAsync() {
         return new MCPingFuture();
     }
 
+    /**
+     * Get a future for the ping response.<br>
+     * The ping will be executed in the given executor and started immediately.
+     *
+     * @param executor The executor
+     * @return The future
+     */
     public Future<R> getAsync(final ExecutorService executor) {
         return executor.submit(() -> {
             CompletableFuture<R> future = new CompletableFuture<>();
@@ -197,7 +352,6 @@ public class MCPing<R extends IPingResponse> {
         public void onError(Throwable throwable) {
             if (MCPing.this.statusListener != null) MCPing.this.statusListener.onError(throwable);
             if (MCPing.this.exceptionHandler != null) MCPing.this.exceptionHandler.accept(throwable);
-            if (MCPing.this.statusListener == null && MCPing.this.exceptionHandler == null) throwable.printStackTrace();
             if (this.future != null) this.future.completeExceptionally(throwable);
         }
 

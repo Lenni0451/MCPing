@@ -12,6 +12,10 @@ import net.lenni0451.mcping.stream.MCOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * The ping implementation for the legacy edition.<br>
+ * Ping response: {@link MCPingResponse}
+ */
 public class LegacyPing extends ATCPPing {
 
     private static final String PING_CHANNEL = "MC|PingHost";
@@ -31,7 +35,7 @@ public class LegacyPing extends ATCPPing {
 
     @Override
     public void ping(ServerAddress serverAddress, IStatusListener statusListener) {
-        try (Socket s = this.connect(serverAddress, this.getDefaultPort())) {
+        try (Socket s = this.connect(serverAddress)) {
             MCInputStream is = new MCInputStream(s.getInputStream());
             MCOutputStream os = new MCOutputStream(s.getOutputStream());
 
@@ -41,9 +45,9 @@ public class LegacyPing extends ATCPPing {
                 if (this.version.equals(Version.V1_6)) {
                     packetOs.writeByte(250);
                     packetOs.writeLegacyString(PING_CHANNEL);
-                    packetOs.writeShort(7 + (2 * serverAddress.getIp().length()));
+                    packetOs.writeShort(7 + (2 * serverAddress.getHost().length()));
                     packetOs.writeByte(this.protocolVersion);
-                    packetOs.writeLegacyString(serverAddress.getIp());
+                    packetOs.writeLegacyString(serverAddress.getHost());
                     packetOs.writeInt(serverAddress.getPort());
                 }
 

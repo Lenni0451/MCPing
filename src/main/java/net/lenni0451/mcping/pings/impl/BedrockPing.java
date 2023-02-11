@@ -12,6 +12,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Random;
 
+/**
+ * The ping implementation for the bedrock edition.<br>
+ * Ping response: {@link BedrockPingResponse}
+ */
 public class BedrockPing extends AUDPPing {
 
     private static final byte[] RAKNET_UNCONNECTED_MAGIC = new byte[]{0, -1, -1, 0, -2, -2, -2, -2, -3, -3, -3, -3, 18, 52, 86, 120};
@@ -33,7 +37,7 @@ public class BedrockPing extends AUDPPing {
             long sessionId = this.rnd.nextLong();
 
             PingReference pingReference = new PingReference();
-            this.writePacket(s, serverAddress, this.getDefaultPort(), packetOs -> {
+            this.writePacket(s, serverAddress, packetOs -> {
                 packetOs.writeByte(1);
                 packetOs.writeLong(System.currentTimeMillis());
                 packetOs.write(RAKNET_UNCONNECTED_MAGIC);

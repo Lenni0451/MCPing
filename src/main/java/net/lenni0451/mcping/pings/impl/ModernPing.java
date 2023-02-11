@@ -15,6 +15,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * The ping implementation for the modern edition.<br>
+ * Ping response: {@link MCPingResponse}
+ */
 public class ModernPing extends ATCPPing {
 
     public ModernPing(final int connectTimeout, final int readTimeout, final int protocolVersion) {
@@ -28,21 +32,21 @@ public class ModernPing extends ATCPPing {
 
     @Override
     public void ping(ServerAddress serverAddress, IStatusListener statusListener) {
-        try (Socket s = this.connect(serverAddress, this.getDefaultPort())) {
+        try (Socket s = this.connect(serverAddress)) {
             MCInputStream is = new MCInputStream(s.getInputStream());
             MCOutputStream os = new MCOutputStream(s.getOutputStream());
 
             MCPingResponse[] pingResponse = new MCPingResponse[1];
             this.writePacket(os, 0, packetOs -> {
                 packetOs.writeVarInt(this.protocolVersion);
-                packetOs.writeString(serverAddress.getIp());
+                packetOs.writeVarString(serverAddress.getHost());
                 packetOs.writeShort(serverAddress.getPort());
                 packetOs.writeVarInt(1);
             });
             this.writePacket(os, 0, packetOs -> {
             });
             this.readPacket(is, 0, packetIs -> {
-                String rawResponse = packetIs.readString(32767);
+                String rawResponse = packetIs.readVarString(32767);
                 JsonObject parsedResponse = JsonParser.parseString(rawResponse).getAsJsonObject();
                 this.prepareResponse(serverAddress, parsedResponse);
                 pingResponse[0] = this.gson.fromJson(parsedResponse, MCPingResponse.class);

@@ -1,5 +1,10 @@
 package net.lenni0451.mcping.responses;
 
+import net.lenni0451.mcping.pings.impl.SocketPing;
+
+/**
+ * The response of a {@link SocketPing}.
+ */
 public class SocketPingResponse implements IPingResponse {
 
     public int latency;
