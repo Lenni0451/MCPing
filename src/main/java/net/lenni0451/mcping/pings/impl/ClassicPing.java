@@ -125,6 +125,9 @@ public class ClassicPing extends ATCPPing {
     }
 
 
+    /**
+     * The different versions of the classic protocol.
+     */
     public enum Version {
         c0_0_15a_1(-1 /* No protocol id */),
         c0_0_16a_02(3),
@@ -139,6 +142,9 @@ public class ClassicPing extends ATCPPing {
             this.protocolId = protocolId;
         }
 
+        /**
+         * @return The protocol id of this version
+         */
         public int getProtocolId() {
             return this.protocolId;
         }

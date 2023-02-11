@@ -112,6 +112,9 @@ public class LegacyPing extends ATCPPing {
     }
 
 
+    /**
+     * The version of the legacy ping protocol.
+     */
     public enum Version {
         V1_2(29),
         V1_3(39),
@@ -124,6 +127,9 @@ public class LegacyPing extends ATCPPing {
             this.defaultId = defaultId;
         }
 
+        /**
+         * @return The default protocol version for this version
+         */
         public int getDefaultId() {
             return this.defaultId;
         }
