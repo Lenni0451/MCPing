@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import net.lenni0451.mcping.ServerAddress;
 import net.lenni0451.mcping.pings.ATCPPing;
 import net.lenni0451.mcping.pings.IStatusListener;
+import net.lenni0451.mcping.pings.PingReference;
 import net.lenni0451.mcping.responses.SocketPingResponse;
 import net.lenni0451.mcping.stream.MCInputStream;
 import net.lenni0451.mcping.stream.MCOutputStream;
@@ -23,16 +24,17 @@ public class SocketPing extends ATCPPing {
 
     @Override
     public void ping(ServerAddress serverAddress, IStatusListener statusListener) {
-        long connectTime = System.currentTimeMillis();
+        PingReference pingReference = new PingReference();
+        pingReference.start();
         try (Socket ignored = this.connect(serverAddress, 25565)) {
-            connectTime = System.currentTimeMillis() - connectTime;
+            pingReference.stop();
             JsonObject ping = new JsonObject();
             this.prepareResponse(serverAddress, ping);
-            ping.addProperty("latency", connectTime);
+            ping.addProperty("latency", pingReference.get());
 
             SocketPingResponse pingResponse = this.gson.fromJson(ping, SocketPingResponse.class);
             statusListener.onResponse(pingResponse);
-            statusListener.onPing(pingResponse, connectTime);
+            statusListener.onPing(pingResponse, pingReference.get());
         } catch (Throwable t) {
             statusListener.onError(t);
         }
