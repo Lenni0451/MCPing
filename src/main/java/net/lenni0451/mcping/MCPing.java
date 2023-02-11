@@ -230,7 +230,8 @@ public class MCPing<R extends IPingResponse> {
 
 
     /**
-     * Set the ping status listener.
+     * Set the ping status listener.<br>
+     * <b>IMPORTANT!</b> See {@link IStatusListener} for more information about the response special cases.
      *
      * @param statusListener The status listener
      * @return This builder
@@ -241,7 +242,8 @@ public class MCPing<R extends IPingResponse> {
     }
 
     /**
-     * Set a dedicated exception handler.
+     * Set a dedicated exception handler.<br>
+     * <b>IMPORTANT!</b> See {@link IStatusListener} for more information about the response special cases.
      *
      * @param exceptionHandler The exception handler
      * @return This builder
@@ -252,7 +254,9 @@ public class MCPing<R extends IPingResponse> {
     }
 
     /**
-     * Set a dedicated response handler.
+     * Set a dedicated response handler.<br>
+     * This handler is called when the server responds with a valid status.<br>
+     * <b>IMPORTANT!</b> See {@link IStatusListener} for more information about the response special cases.
      *
      * @param responseHandler The response handler
      * @return This builder
@@ -263,7 +267,9 @@ public class MCPing<R extends IPingResponse> {
     }
 
     /**
-     * Set a dedicated finish handler.
+     * Set a dedicated finish handler.<br>
+     * This handler is called when the ping is finished.<br>
+     * <b>IMPORTANT!</b> See {@link IStatusListener} for more information about the response special cases.
      *
      * @param finishHandler The finish handler
      * @return This builder
