@@ -12,10 +12,13 @@ import java.net.Socket;
 
 public class SocketPing extends ATCPPing {
 
-    private static final int DEFAULT_PORT = 25565;
-
     public SocketPing(final int connectTimeout) {
         super(connectTimeout, 10_000, 0);
+    }
+
+    @Override
+    public int getDefaultPort() {
+        return 25565;
     }
 
     @Override
@@ -24,7 +27,7 @@ public class SocketPing extends ATCPPing {
         try (Socket ignored = this.connect(serverAddress, 25565)) {
             connectTime = System.currentTimeMillis() - connectTime;
             JsonObject ping = new JsonObject();
-            this.prepareResponse(serverAddress, ping, DEFAULT_PORT);
+            this.prepareResponse(serverAddress, ping, this.getDefaultPort());
             ping.addProperty("latency", connectTime);
 
             SocketPingResponse pingResponse = this.gson.fromJson(ping, SocketPingResponse.class);

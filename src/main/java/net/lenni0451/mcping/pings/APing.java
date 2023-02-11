@@ -9,6 +9,8 @@ public abstract class APing {
 
     protected final Gson gson = new GsonBuilder().create();
 
+    public abstract int getDefaultPort();
+
     public abstract void ping(final ServerAddress serverAddress, final IStatusListener statusListener);
 
 

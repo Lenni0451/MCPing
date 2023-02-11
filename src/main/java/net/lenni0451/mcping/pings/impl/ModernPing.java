@@ -17,15 +17,18 @@ import java.net.Socket;
 
 public class ModernPing extends ATCPPing {
 
-    private static final int DEFAULT_PORT = 25565;
-
     public ModernPing(final int connectTimeout, final int readTimeout, final int protocolVersion) {
         super(connectTimeout, readTimeout, protocolVersion);
     }
 
     @Override
+    public int getDefaultPort() {
+        return 25565;
+    }
+
+    @Override
     public void ping(ServerAddress serverAddress, IStatusListener statusListener) {
-        try (Socket s = this.connect(serverAddress, DEFAULT_PORT)) {
+        try (Socket s = this.connect(serverAddress, this.getDefaultPort())) {
             MCInputStream is = new MCInputStream(s.getInputStream());
             MCOutputStream os = new MCOutputStream(s.getOutputStream());
 
@@ -33,7 +36,7 @@ public class ModernPing extends ATCPPing {
             this.writePacket(os, 0, packetOs -> {
                 packetOs.writeVarInt(this.protocolVersion);
                 packetOs.writeString(serverAddress.getIp());
-                packetOs.writeShort(serverAddress.getPort(DEFAULT_PORT));
+                packetOs.writeShort(serverAddress.getPort(this.getDefaultPort()));
                 packetOs.writeVarInt(1);
             });
             this.writePacket(os, 0, packetOs -> {
@@ -41,7 +44,7 @@ public class ModernPing extends ATCPPing {
             this.readPacket(is, 0, packetIs -> {
                 String rawResponse = packetIs.readString(32767);
                 JsonObject parsedResponse = JsonParser.parseString(rawResponse).getAsJsonObject();
-                this.prepareResponse(serverAddress, parsedResponse, DEFAULT_PORT);
+                this.prepareResponse(serverAddress, parsedResponse, this.getDefaultPort());
                 pingResponse[0] = this.gson.fromJson(parsedResponse, MCPingResponse.class);
                 statusListener.onResponse(pingResponse[0]);
             });

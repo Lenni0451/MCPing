@@ -16,7 +16,6 @@ import java.util.Random;
 
 public class QueryPing extends AUDPPing {
 
-    private static final int DEFAULT_PORT = 25565;
     private static final byte[] MAGIC_BYTES = {(byte) 0xFE, (byte) 0xFD};
 
     private final Random rnd = new Random();
@@ -29,12 +28,17 @@ public class QueryPing extends AUDPPing {
     }
 
     @Override
+    public int getDefaultPort() {
+        return 25565;
+    }
+
+    @Override
     public void ping(ServerAddress serverAddress, IStatusListener statusListener) {
         try (DatagramSocket s = this.connect()) {
             int sessionId = (this.rnd.nextInt((0x7FFFFFFF - 0x1) + 1) + 0x1) & 0x0F0F0F0F;
             int[] challengeToken = new int[1];
 
-            this.writePacket(s, serverAddress, DEFAULT_PORT, packetOs -> {
+            this.writePacket(s, serverAddress, this.getDefaultPort(), packetOs -> {
                 packetOs.write(MAGIC_BYTES);
                 packetOs.write(9);
                 packetOs.writeInt(sessionId);
@@ -59,7 +63,7 @@ public class QueryPing extends AUDPPing {
 
     private void requestQuery(final DatagramSocket s, final ServerAddress serverAddress, final IStatusListener statusListener, final int sessionId, final int challengeToken) throws IOException {
         PingReference pingReference = new PingReference();
-        this.writePacket(s, serverAddress, DEFAULT_PORT, packetOs -> {
+        this.writePacket(s, serverAddress, this.getDefaultPort(), packetOs -> {
             packetOs.write(MAGIC_BYTES);
             packetOs.write(0);
             packetOs.writeInt(sessionId);
@@ -84,7 +88,7 @@ public class QueryPing extends AUDPPing {
             String hostIp = this.readNullTerminatedString(packetIs);
 
             JsonObject response = new JsonObject();
-            this.prepareResponse(serverAddress, response, DEFAULT_PORT, 0);
+            this.prepareResponse(serverAddress, response, this.getDefaultPort(), 0);
             response.getAsJsonObject("server").addProperty("ping", pingReference.get());
             response.getAsJsonObject("server").addProperty("hostIp", hostIp);
             response.getAsJsonObject("server").addProperty("hostPort", hostPort);
@@ -106,7 +110,7 @@ public class QueryPing extends AUDPPing {
 
     private void requestFullQuery(final DatagramSocket s, final ServerAddress serverAddress, final IStatusListener statusListener, final int sessionId, final int challengeToken) throws IOException {
         PingReference pingReference = new PingReference();
-        this.writePacket(s, serverAddress, DEFAULT_PORT, packetOs -> {
+        this.writePacket(s, serverAddress, this.getDefaultPort(), packetOs -> {
             packetOs.write(MAGIC_BYTES);
             packetOs.write(0);
             packetOs.writeInt(sessionId);
@@ -125,7 +129,7 @@ public class QueryPing extends AUDPPing {
             packetIs.skipBytes(11);
 
             JsonObject response = new JsonObject();
-            this.prepareResponse(serverAddress, response, DEFAULT_PORT, 0);
+            this.prepareResponse(serverAddress, response, this.getDefaultPort(), 0);
             response.getAsJsonObject("server").addProperty("ping", pingReference.get());
 
             JsonObject players = new JsonObject();

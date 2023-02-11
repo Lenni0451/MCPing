@@ -14,7 +14,6 @@ import java.util.Random;
 
 public class BedrockPing extends AUDPPing {
 
-    private static final int DEFAULT_PORT = 19132;
     private static final byte[] RAKNET_UNCONNECTED_MAGIC = new byte[]{0, -1, -1, 0, -2, -2, -2, -2, -3, -3, -3, -3, 18, 52, 86, 120};
 
     private final Random rnd = new Random();
@@ -24,12 +23,17 @@ public class BedrockPing extends AUDPPing {
     }
 
     @Override
+    public int getDefaultPort() {
+        return 19132;
+    }
+
+    @Override
     public void ping(ServerAddress serverAddress, IStatusListener statusListener) {
         try (DatagramSocket s = this.connect()) {
             long sessionId = this.rnd.nextLong();
 
             PingReference pingReference = new PingReference();
-            this.writePacket(s, serverAddress, DEFAULT_PORT, packetOs -> {
+            this.writePacket(s, serverAddress, this.getDefaultPort(), packetOs -> {
                 packetOs.writeByte(1);
                 packetOs.writeLong(System.currentTimeMillis());
                 packetOs.write(RAKNET_UNCONNECTED_MAGIC);
@@ -55,7 +59,7 @@ public class BedrockPing extends AUDPPing {
                 packetIs.readFully(userData);
 
                 JsonObject response = new JsonObject();
-                this.prepareResponse(serverAddress, response, DEFAULT_PORT, 0);
+                this.prepareResponse(serverAddress, response, this.getDefaultPort(), 0);
                 response.getAsJsonObject("server").addProperty("ping", pingReference.get());
 
                 this.parseResponse(response, new String(userData, StandardCharsets.UTF_8));

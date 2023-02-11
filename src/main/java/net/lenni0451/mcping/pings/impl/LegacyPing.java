@@ -14,7 +14,6 @@ import java.net.Socket;
 
 public class LegacyPing extends ATCPPing {
 
-    private static final int DEFAULT_PORT = 25565;
     private static final String PING_CHANNEL = "MC|PingHost";
 
     private final Version version;
@@ -26,8 +25,13 @@ public class LegacyPing extends ATCPPing {
     }
 
     @Override
+    public int getDefaultPort() {
+        return 25565;
+    }
+
+    @Override
     public void ping(ServerAddress serverAddress, IStatusListener statusListener) {
-        try (Socket s = this.connect(serverAddress, DEFAULT_PORT)) {
+        try (Socket s = this.connect(serverAddress, this.getDefaultPort())) {
             MCInputStream is = new MCInputStream(s.getInputStream());
             MCOutputStream os = new MCOutputStream(s.getOutputStream());
 
@@ -40,7 +44,7 @@ public class LegacyPing extends ATCPPing {
                     packetOs.writeShort(7 + (2 * serverAddress.getIp().length()));
                     packetOs.writeByte(this.protocolVersion);
                     packetOs.writeLegacyString(serverAddress.getIp());
-                    packetOs.writeInt(serverAddress.getPort(DEFAULT_PORT));
+                    packetOs.writeInt(serverAddress.getPort(this.getDefaultPort()));
                 }
 
                 pingReference.start();
@@ -48,7 +52,7 @@ public class LegacyPing extends ATCPPing {
             this.readPacket(is, 255, packetIs -> {
                 pingReference.stop();
                 JsonObject ping = new JsonObject();
-                this.prepareResponse(serverAddress, ping, DEFAULT_PORT);
+                this.prepareResponse(serverAddress, ping, this.getDefaultPort());
                 ping.getAsJsonObject("server").addProperty("ping", pingReference.get());
 
                 if (this.version.equals(Version.V1_5) || this.version.equals(Version.V1_6)) {
