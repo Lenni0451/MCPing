@@ -24,7 +24,7 @@ public class MCOutputStream extends DataOutputStream {
 
     /**
      * Write a var int to the stream.<br>
-     * This is the integer format used by the modern ping protocol (>= 1.7).
+     * This is the integer format used by the modern ping protocol ({@literal >}= 1.7).
      *
      * @param value The value to write
      * @throws IOException If an I/O error occurs
@@ -40,7 +40,7 @@ public class MCOutputStream extends DataOutputStream {
 
     /**
      * Write a var string to the stream.<br>
-     * This is the string format used by the modern ping protocol (>= 1.7).
+     * This is the string format used by the modern ping protocol ({@literal >}= 1.7).
      *
      * @param string The string to write
      * @throws IOException If an I/O error occurs
@@ -53,7 +53,7 @@ public class MCOutputStream extends DataOutputStream {
 
     /**
      * Write a legacy string to the stream.<br>
-     * This is the string format used by the legacy ping protocol (<= 1.6).
+     * This is the string format used by the legacy ping protocol ({@literal <}= 1.6).
      *
      * @param s The string to write
      * @throws IOException If an I/O error occurs

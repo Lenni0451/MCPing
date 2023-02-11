@@ -43,7 +43,7 @@ public class MCInputStream extends DataInputStream {
 
     /**
      * Read a var string from the stream.<br>
-     * This is the string format used by the modern ping protocol (>= 1.7).
+     * This is the string format used by the modern ping protocol ({@literal >}= 1.7).
      *
      * @param maxLength The maximum length of the string
      * @return The read string
@@ -63,7 +63,7 @@ public class MCInputStream extends DataInputStream {
 
     /**
      * Read a legacy string from the stream.<br>
-     * This is the string format used by the old ping protocol (<= 1.6).
+     * This is the string format used by the old ping protocol ({@literal <}= 1.6).
      *
      * @return The read string
      * @throws IOException If an I/O error occurs
