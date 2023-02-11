@@ -44,7 +44,7 @@ public class ModernPing extends ATCPPing {
             this.readPacket(is, 0, packetIs -> {
                 String rawResponse = packetIs.readString(32767);
                 JsonObject parsedResponse = JsonParser.parseString(rawResponse).getAsJsonObject();
-                this.prepareResponse(serverAddress, parsedResponse, this.getDefaultPort());
+                this.prepareResponse(serverAddress, parsedResponse);
                 pingResponse[0] = this.gson.fromJson(parsedResponse, MCPingResponse.class);
                 statusListener.onResponse(pingResponse[0]);
             });

@@ -33,8 +33,8 @@ public abstract class ATCPPing extends APing {
         return s;
     }
 
-    protected final void prepareResponse(final ServerAddress serverAddress, final JsonObject response, final int defaultPort) {
-        this.prepareResponse(serverAddress, response, defaultPort, this.protocolVersion);
+    protected final void prepareResponse(final ServerAddress serverAddress, final JsonObject response) {
+        this.prepareResponse(serverAddress, response, this.protocolVersion);
     }
 
 

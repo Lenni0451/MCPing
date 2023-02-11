@@ -59,7 +59,7 @@ public class BedrockPing extends AUDPPing {
                 packetIs.readFully(userData);
 
                 JsonObject response = new JsonObject();
-                this.prepareResponse(serverAddress, response, this.getDefaultPort(), 0);
+                this.prepareResponse(serverAddress, response, 0);
                 response.getAsJsonObject("server").addProperty("ping", pingReference.get());
 
                 this.parseResponse(response, new String(userData, StandardCharsets.UTF_8));

@@ -52,7 +52,7 @@ public class LegacyPing extends ATCPPing {
             this.readPacket(is, 255, packetIs -> {
                 pingReference.stop();
                 JsonObject ping = new JsonObject();
-                this.prepareResponse(serverAddress, ping, this.getDefaultPort());
+                this.prepareResponse(serverAddress, ping);
                 ping.getAsJsonObject("server").addProperty("ping", pingReference.get());
 
                 if (this.version.equals(Version.V1_5) || this.version.equals(Version.V1_6)) {

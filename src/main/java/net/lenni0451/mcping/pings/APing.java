@@ -14,7 +14,7 @@ public abstract class APing {
     public abstract void ping(final ServerAddress serverAddress, final IStatusListener statusListener);
 
 
-    protected final void prepareResponse(final ServerAddress serverAddress, final JsonObject response, final int defaultPort, final int protocolVersion) {
+    protected final void prepareResponse(final ServerAddress serverAddress, final JsonObject response, final int protocolVersion) {
         JsonObject server = new JsonObject();
         server.addProperty("ip", serverAddress.getIp());
         server.addProperty("port", serverAddress.getPort());

@@ -27,7 +27,7 @@ public class SocketPing extends ATCPPing {
         try (Socket ignored = this.connect(serverAddress, 25565)) {
             connectTime = System.currentTimeMillis() - connectTime;
             JsonObject ping = new JsonObject();
-            this.prepareResponse(serverAddress, ping, this.getDefaultPort());
+            this.prepareResponse(serverAddress, ping);
             ping.addProperty("latency", connectTime);
 
             SocketPingResponse pingResponse = this.gson.fromJson(ping, SocketPingResponse.class);

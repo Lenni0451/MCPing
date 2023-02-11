@@ -88,7 +88,7 @@ public class QueryPing extends AUDPPing {
             String hostIp = this.readNullTerminatedString(packetIs);
 
             JsonObject response = new JsonObject();
-            this.prepareResponse(serverAddress, response, this.getDefaultPort(), 0);
+            this.prepareResponse(serverAddress, response, 0);
             response.getAsJsonObject("server").addProperty("ping", pingReference.get());
             response.getAsJsonObject("server").addProperty("hostIp", hostIp);
             response.getAsJsonObject("server").addProperty("hostPort", hostPort);
@@ -129,7 +129,7 @@ public class QueryPing extends AUDPPing {
             packetIs.skipBytes(11);
 
             JsonObject response = new JsonObject();
-            this.prepareResponse(serverAddress, response, this.getDefaultPort(), 0);
+            this.prepareResponse(serverAddress, response, 0);
             response.getAsJsonObject("server").addProperty("ping", pingReference.get());
 
             JsonObject players = new JsonObject();

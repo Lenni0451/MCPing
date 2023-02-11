@@ -75,7 +75,7 @@ public class ClassicPing extends ATCPPing {
             this.readPacket(is, 0, packetIs -> {
                 pingReference.stop();
                 JsonObject ping = new JsonObject();
-                this.prepareResponse(serverAddress, ping, this.getDefaultPort());
+                this.prepareResponse(serverAddress, ping);
                 ping.getAsJsonObject("server").addProperty("ping", pingReference.get());
 
                 if (this.version.equals(Version.c0_0_15a_1)) {
