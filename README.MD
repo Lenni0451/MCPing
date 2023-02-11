@@ -1,2 +1,2 @@
-# Gradle Template
-A template project for my gradle based repos
+# MCPing
+A simple library to ping minecraft servers

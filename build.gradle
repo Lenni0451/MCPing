@@ -1,5 +1,5 @@
 plugins {
-    id "java"
+    id "java-library"
     id "maven-publish"
     id "signing"
 }
@@ -11,42 +11,13 @@ archivesBaseName = project.maven_name
 group = project.maven_group
 version = project.maven_version
 
-configurations {
-    include
-
-    implementation.extendsFrom include
-    api.extendsFrom include
-}
-
 repositories {
     mavenCentral()
-    maven {
-        name = "lenni0451 releases"
-        url = "https://maven.lenni0451.net/releases"
-    }
-    //maven {
-    //    name = "Sonatype Snapshots"
-    //    url "https://oss.sonatype.org/content/repositories/snapshots/"
-    //}
-
-    //ivy { //include "waterfall:1.19:504@jar"
-    //    url "https://papermc.io/api/v2/projects"
-    //    patternLayout {
-    //        artifact "/[organisation]/versions/[module]/builds/[revision]/downloads/[organisation]-[module]-[revision].[ext]"
-    //    }
-    //    metadataSources {
-    //        artifact()
-    //    }
-    //}
 }
 
 dependencies {
-    if (new File(projectDir, "libs").exists()) {
-        include fileTree(include: ["*.jar"], dir: "libs")
-    }
-
-    implementation "com.google.code.findbugs:jsr305:3.0.2"
-    //include "net.lenni0451:Reflect:1.0.0"
+    compileOnly "com.google.code.findbugs:jsr305:3.0.2"
+    api "com.google.code.gson:gson:2.10.1"
 }
 
 java {
@@ -54,40 +25,8 @@ java {
     withJavadocJar()
 }
 
-processResources {
-    //Config file: "version: ${version}"
-    inputs.properties(
-            "version": project.maven_version
-    )
-    
-    filesMatching("config") {
-        expand(
-                "version": project.maven_version
-        )
-    }
-}
-
 artifacts {
     archives javadocJar, sourcesJar
-}
-
-jar {
-    dependsOn configurations.include
-    from {
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        configurations.include.collect {
-            zipTree(it)
-        }
-    } {
-        exclude "META-INF/*.RSA", "META-INF/*.SF", "META-INF/*.DSA"
-    }
-
-    manifest {
-        attributes(
-                "Main-Class": "net.lenni0451.gradletemplate.Main",
-                "Multi-Release": "true"
-        )
-    }
 }
 
 test {
@@ -133,12 +72,12 @@ publishing {
 
             pom {
                 name = rootProject.name
-                description = "A template for gradle projects"
-                url = "https://github.com/Lenni0451/GradleTemplate"
+                description = "A simple library to ping minecraft servers"
+                url = "https://github.com/Lenni0451/MCPing"
                 licenses {
                     license {
                         name = "MIT License"
-                        url = "https://github.com/Lenni0451/GradleTemplate/blob/main/LICENSE"
+                        url = "https://github.com/Lenni0451/MCPing/blob/main/LICENSE"
                     }
                 }
                 developers {
@@ -147,9 +86,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection = "scm:git:git://github.com/Lenni0451/GradleTemplate.git"
-                    developerConnection = "scm:git:ssh://github.com/Lenni0451/GradleTemplate.git"
-                    url = "github.com/Lenni0451/GradleTemplate"
+                    connection = "scm:git:git://github.com/Lenni0451/MCPing.git"
+                    developerConnection = "scm:git:ssh://github.com/Lenni0451/MCPing.git"
+                    url = "github.com/Lenni0451/MCPing"
                 }
             }
         }
