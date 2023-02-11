@@ -29,7 +29,7 @@ public abstract class ATCPPing extends APing {
     protected final Socket connect(final ServerAddress serverAddress, final int defaultPort) throws IOException {
         Socket s = new Socket();
         s.setSoTimeout(this.readTimeout);
-        s.connect(serverAddress.toInetSocketAddress(defaultPort), this.connectTimeout);
+        s.connect(serverAddress.toInetSocketAddress(), this.connectTimeout);
         return s;
     }
 

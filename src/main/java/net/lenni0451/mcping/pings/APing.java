@@ -17,7 +17,7 @@ public abstract class APing {
     protected final void prepareResponse(final ServerAddress serverAddress, final JsonObject response, final int defaultPort, final int protocolVersion) {
         JsonObject server = new JsonObject();
         server.addProperty("ip", serverAddress.getIp());
-        server.addProperty("port", serverAddress.getPort(defaultPort));
+        server.addProperty("port", serverAddress.getPort());
         server.addProperty("protocol", protocolVersion);
         response.add("server", server);
 

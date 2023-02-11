@@ -75,12 +75,12 @@ public class MCPing<R extends IPingResponse> {
     }
 
     public MCPing<R> address(final String ip) {
-        this.serverAddress = new ServerAddress(ip);
+        this.serverAddress = ServerAddress.parse(ip, this.ping.apply(this).getDefaultPort());
         return this;
     }
 
     public MCPing<R> address(final String ip, final int port) {
-        this.serverAddress = new ServerAddress(ip, port);
+        this.serverAddress = ServerAddress.of(ip, port, this.ping.apply(this).getDefaultPort());
         return this;
     }
 
@@ -92,16 +92,14 @@ public class MCPing<R extends IPingResponse> {
     public MCPing<R> address(final SocketAddress address) {
         if (address instanceof InetSocketAddress) {
             InetSocketAddress socketAddress = (InetSocketAddress) address;
-            this.serverAddress = new ServerAddress(socketAddress.getHostString(), socketAddress.getPort());
+            return this.address(socketAddress.getHostString(), socketAddress.getPort());
         } else {
-            this.serverAddress = new ServerAddress(address.toString());
+            return this.address(address.toString());
         }
-        return this;
     }
 
     public MCPing<R> address(final InetAddress address) {
-        this.address(address.getHostAddress());
-        return this;
+        return this.address(address.getHostAddress());
     }
 
     public MCPing<R> resolve() {

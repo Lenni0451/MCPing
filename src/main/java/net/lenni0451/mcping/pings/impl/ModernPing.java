@@ -36,7 +36,7 @@ public class ModernPing extends ATCPPing {
             this.writePacket(os, 0, packetOs -> {
                 packetOs.writeVarInt(this.protocolVersion);
                 packetOs.writeString(serverAddress.getIp());
-                packetOs.writeShort(serverAddress.getPort(this.getDefaultPort()));
+                packetOs.writeShort(serverAddress.getPort());
                 packetOs.writeVarInt(1);
             });
             this.writePacket(os, 0, packetOs -> {

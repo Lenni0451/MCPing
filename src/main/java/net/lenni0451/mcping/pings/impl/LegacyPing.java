@@ -44,7 +44,7 @@ public class LegacyPing extends ATCPPing {
                     packetOs.writeShort(7 + (2 * serverAddress.getIp().length()));
                     packetOs.writeByte(this.protocolVersion);
                     packetOs.writeLegacyString(serverAddress.getIp());
-                    packetOs.writeInt(serverAddress.getPort(this.getDefaultPort()));
+                    packetOs.writeInt(serverAddress.getPort());
                 }
 
                 pingReference.start();

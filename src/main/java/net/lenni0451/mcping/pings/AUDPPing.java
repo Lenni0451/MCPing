@@ -28,7 +28,7 @@ public abstract class AUDPPing extends APing {
 
         packetWriter.write(os);
 
-        DatagramPacket packet = new DatagramPacket(baos.toByteArray(), baos.size(), serverAddress.toInetSocketAddress(defaultPort));
+        DatagramPacket packet = new DatagramPacket(baos.toByteArray(), baos.size(), serverAddress.toInetSocketAddress());
         s.send(packet);
     }
 
