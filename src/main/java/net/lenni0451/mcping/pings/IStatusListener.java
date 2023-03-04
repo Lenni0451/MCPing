@@ -18,14 +18,22 @@ public interface IStatusListener {
      *
      * @param throwable The thrown exception
      */
-    void onError(final Throwable throwable);
+    default void onError(final Throwable throwable) {
+    }
+
+    /**
+     * Called when the connection to the server was established.
+     */
+    default void onConnected() {
+    }
 
     /**
      * Called when the server responded with a status message.
      *
      * @param pingResponse The response
      */
-    void onResponse(final IPingResponse pingResponse);
+    default void onResponse(final IPingResponse pingResponse) {
+    }
 
     /**
      * Called when the ping was successful.
@@ -33,6 +41,7 @@ public interface IStatusListener {
      * @param pingResponse The response
      * @param ping         The ping in ms
      */
-    void onPing(final IPingResponse pingResponse, final long ping);
+    default void onPing(final IPingResponse pingResponse, final long ping) {
+    }
 
 }

@@ -39,6 +39,7 @@ public class QueryPing extends AUDPPing {
     @Override
     public void ping(ServerAddress serverAddress, IStatusListener statusListener) {
         try (DatagramSocket s = this.connect()) {
+            statusListener.onConnected();
             int sessionId = (this.rnd.nextInt((0x7FFFFFFF - 0x1) + 1) + 0x1) & 0x0F0F0F0F;
             int[] challengeToken = new int[1];
 

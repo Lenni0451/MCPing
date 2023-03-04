@@ -34,6 +34,7 @@ public class BedrockPing extends AUDPPing {
     @Override
     public void ping(ServerAddress serverAddress, IStatusListener statusListener) {
         try (DatagramSocket s = this.connect()) {
+            statusListener.onConnected();
             long sessionId = this.rnd.nextLong();
 
             PingReference pingReference = new PingReference();

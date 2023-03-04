@@ -35,6 +35,7 @@ public class ModernPing extends ATCPPing {
         try (Socket s = this.connect(serverAddress)) {
             MCInputStream is = new MCInputStream(s.getInputStream());
             MCOutputStream os = new MCOutputStream(s.getOutputStream());
+            statusListener.onConnected();
 
             MCPingResponse[] pingResponse = new MCPingResponse[1];
             this.writePacket(os, 0, packetOs -> {

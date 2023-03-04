@@ -38,6 +38,7 @@ public class LegacyPing extends ATCPPing {
         try (Socket s = this.connect(serverAddress)) {
             MCInputStream is = new MCInputStream(s.getInputStream());
             MCOutputStream os = new MCOutputStream(s.getOutputStream());
+            statusListener.onConnected();
 
             PingReference pingReference = new PingReference();
             this.writePacket(os, 254, packetOs -> {

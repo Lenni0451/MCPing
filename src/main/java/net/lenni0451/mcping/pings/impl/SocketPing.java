@@ -31,6 +31,7 @@ public class SocketPing extends ATCPPing {
         PingReference pingReference = new PingReference();
         pingReference.start();
         try (Socket ignored = this.connect(serverAddress)) {
+            statusListener.onConnected();
             pingReference.stop();
             JsonObject ping = new JsonObject();
             this.prepareResponse(serverAddress, ping);

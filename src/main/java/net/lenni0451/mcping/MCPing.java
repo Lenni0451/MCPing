@@ -123,6 +123,7 @@ public class MCPing<R extends IPingResponse> {
     private int readTimeout = 10_000;
     private IStatusListener statusListener;
     private Consumer<Throwable> exceptionHandler;
+    private Runnable connectedHandler;
     private Consumer<R> responseHandler;
     private Consumer<R> finishHandler;
 
@@ -254,6 +255,19 @@ public class MCPing<R extends IPingResponse> {
     }
 
     /**
+     * Set a dedicated connected handler.<br>
+     * This handler is called when the connection to the server was established.<br>
+     * <b>IMPORTANT!</b> See {@link IStatusListener} for more information about the response special cases.
+     *
+     * @param connectedHandler The connected handler
+     * @return This builder
+     */
+    public MCPing<R> connectedHandler(final Runnable connectedHandler) {
+        this.connectedHandler = connectedHandler;
+        return this;
+    }
+
+    /**
      * Set a dedicated response handler.<br>
      * This handler is called when the server responds with a valid status.<br>
      * <b>IMPORTANT!</b> See {@link IStatusListener} for more information about the response special cases.
@@ -359,6 +373,11 @@ public class MCPing<R extends IPingResponse> {
             if (MCPing.this.statusListener != null) MCPing.this.statusListener.onError(throwable);
             if (MCPing.this.exceptionHandler != null) MCPing.this.exceptionHandler.accept(throwable);
             if (this.future != null) this.future.completeExceptionally(throwable);
+        }
+
+        @Override
+        public void onConnected() {
+            if (MCPing.this.connectedHandler != null) MCPing.this.connectedHandler.run();
         }
 
         @Override
