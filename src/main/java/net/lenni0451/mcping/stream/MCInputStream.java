@@ -1,5 +1,6 @@
 package net.lenni0451.mcping.stream;
 
+import net.lenni0451.mcping.exception.DataReadException;
 import net.lenni0451.mcping.pings.impl.ClassicPing;
 
 import java.io.DataInputStream;
@@ -25,7 +26,8 @@ public class MCInputStream extends DataInputStream {
      * Read a var int from the stream.
      *
      * @return The read var int
-     * @throws IOException If an I/O error occurs
+     * @throws IOException       If an I/O error occurs
+     * @throws DataReadException If the var int is too big
      */
     public int readVarInt() throws IOException {
         int i = 0;
@@ -35,7 +37,7 @@ public class MCInputStream extends DataInputStream {
         do {
             b = this.readByte();
             i |= (b & 127) << j++ * 7;
-            if (j > 5) throw new RuntimeException("VarInt too big");
+            if (j > 5) throw new DataReadException("VarInt too big");
         } while ((b & 128) == 128);
 
         return i;
@@ -47,17 +49,18 @@ public class MCInputStream extends DataInputStream {
      *
      * @param maxLength The maximum length of the string
      * @return The read string
-     * @throws IOException If an I/O error occurs
+     * @throws IOException       If an I/O error occurs
+     * @throws DataReadException If the string length is invalid
      */
     public String readVarString(final int maxLength) throws IOException {
         int length = this.readVarInt();
-        if (length > maxLength * 4) throw new IOException("The received encoded string buffer length is longer than maximum allowed (" + length + " > " + maxLength * 4 + ")");
-        if (length < 0) throw new IOException("The received encoded string buffer length is less than zero!");
+        if (length > maxLength * 4) throw new DataReadException("The received encoded string buffer is longer than maximum allowed (" + length + " > " + maxLength * 4 + ")");
+        if (length < 0) throw new DataReadException("The received encoded string buffer is shorter than zero!");
 
         byte[] bytes = new byte[length];
         this.readFully(bytes);
         String string = new String(bytes, StandardCharsets.UTF_8);
-        if (string.length() > maxLength) throw new IOException("The received string length is longer than maximum allowed (" + length + " > " + maxLength + ")");
+        if (string.length() > maxLength) throw new DataReadException("The received string is longer than maximum allowed (" + length + " > " + maxLength + ")");
         else return string;
     }
 
@@ -66,11 +69,12 @@ public class MCInputStream extends DataInputStream {
      * This is the string format used by the old ping protocol ({@literal <}= 1.6).
      *
      * @return The read string
-     * @throws IOException If an I/O error occurs
+     * @throws IOException       If an I/O error occurs
+     * @throws DataReadException If the string length is invalid
      */
     public String readLegacyString() throws IOException {
         int length = this.readShort();
-        if (length < 0) throw new IOException("The received encoded string buffer length is less than zero!");
+        if (length < 0) throw new DataReadException("The received encoded string buffer is shorter than zero!");
 
         char[] chars = new char[length];
         for (int i = 0; i < length; i++) chars[i] = this.readChar();
