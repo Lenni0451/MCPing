@@ -2,6 +2,7 @@ package net.lenni0451.mcping.pings.impl;
 
 import com.google.gson.JsonObject;
 import net.lenni0451.mcping.ServerAddress;
+import net.lenni0451.mcping.exception.PacketReadException;
 import net.lenni0451.mcping.pings.ATCPPing;
 import net.lenni0451.mcping.pings.IStatusListener;
 import net.lenni0451.mcping.pings.PingReference;
@@ -112,7 +113,7 @@ public class ClassicPing extends ATCPPing {
     @Override
     protected void readPacket(MCInputStream is, int packetId, PacketReader packetReader) throws IOException {
         int packetPacketId = is.readUnsignedByte();
-        if (packetPacketId != packetId) throw new IOException("Expected packet id " + packetId + ", got " + packetPacketId);
+        if (packetPacketId != packetId) throw new PacketReadException("Expected packet id " + packetId + ", got " + packetPacketId);
         packetReader.read(is);
     }
 

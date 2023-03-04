@@ -3,6 +3,7 @@ package net.lenni0451.mcping.pings.impl;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.lenni0451.mcping.ServerAddress;
+import net.lenni0451.mcping.exception.PacketReadException;
 import net.lenni0451.mcping.pings.AUDPPing;
 import net.lenni0451.mcping.pings.IStatusListener;
 import net.lenni0451.mcping.pings.PingReference;
@@ -50,9 +51,9 @@ public class QueryPing extends AUDPPing {
             });
             this.readPacket(s, 32, packetIs -> {
                 int id = packetIs.readByte();
-                if (id != 9) throw new IOException("Expected packet id 9, got " + id);
+                if (id != 9) throw new PacketReadException("Expected packet id 9, got " + id);
                 int sessionIdResponse = packetIs.readInt();
-                if (sessionIdResponse != sessionId) throw new IllegalStateException("Invalid session id: " + sessionIdResponse);
+                if (sessionIdResponse != sessionId) throw new PacketReadException("Invalid session id: " + sessionIdResponse);
 
                 byte[] challengeTokenBytes = new byte[packetIs.available()];
                 packetIs.readFully(challengeTokenBytes);
@@ -80,9 +81,9 @@ public class QueryPing extends AUDPPing {
             pingReference.stop();
 
             int id = packetIs.readByte();
-            if (id != 0) throw new IOException("Expected packet id 0, got " + id);
+            if (id != 0) throw new PacketReadException("Expected packet id 0, got " + id);
             int sessionIdResponse = packetIs.readInt();
-            if (sessionIdResponse != sessionId) throw new IllegalStateException("Invalid session id: " + sessionIdResponse);
+            if (sessionIdResponse != sessionId) throw new PacketReadException("Invalid session id: " + sessionIdResponse);
 
             String motd = this.readNullTerminatedString(packetIs);
             String gameType = this.readNullTerminatedString(packetIs);
@@ -128,9 +129,9 @@ public class QueryPing extends AUDPPing {
             pingReference.stop();
 
             int id = packetIs.readByte();
-            if (id != 0) throw new IOException("Expected packet id 0, got " + id);
+            if (id != 0) throw new PacketReadException("Expected packet id 0, got " + id);
             int sessionIdResponse = packetIs.readInt();
-            if (sessionIdResponse != sessionId) throw new IllegalStateException("Invalid session id: " + sessionIdResponse);
+            if (sessionIdResponse != sessionId) throw new PacketReadException("Invalid session id: " + sessionIdResponse);
             packetIs.skipBytes(11);
 
             JsonObject response = new JsonObject();

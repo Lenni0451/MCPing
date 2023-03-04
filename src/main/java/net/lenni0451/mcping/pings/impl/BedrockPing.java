@@ -2,6 +2,7 @@ package net.lenni0451.mcping.pings.impl;
 
 import com.google.gson.JsonObject;
 import net.lenni0451.mcping.ServerAddress;
+import net.lenni0451.mcping.exception.PacketReadException;
 import net.lenni0451.mcping.pings.AUDPPing;
 import net.lenni0451.mcping.pings.IStatusListener;
 import net.lenni0451.mcping.pings.PingReference;
@@ -50,16 +51,16 @@ public class BedrockPing extends AUDPPing {
                 pingReference.stop();
 
                 int packetId = packetIs.readUnsignedByte();
-                if (packetId != 28) throw new IllegalStateException("Expected packet id 28, got " + packetId);
+                if (packetId != 28) throw new PacketReadException("Expected packet id 28, got " + packetId);
                 byte[] readMagic = new byte[RAKNET_UNCONNECTED_MAGIC.length];
 
                 packetIs.readLong();
                 packetIs.readLong();
                 packetIs.readFully(readMagic);
-                if (!Arrays.equals(readMagic, RAKNET_UNCONNECTED_MAGIC)) throw new IllegalStateException("Invalid magic");
+                if (!Arrays.equals(readMagic, RAKNET_UNCONNECTED_MAGIC)) throw new PacketReadException("Invalid raknet magic");
 
                 byte[] userData;
-                if (packetIs.available() <= 0) throw new IllegalStateException("No user data");
+                if (packetIs.available() <= 0) throw new PacketReadException("No user data");
                 userData = new byte[packetIs.readUnsignedShort()];
                 packetIs.readFully(userData);
 
