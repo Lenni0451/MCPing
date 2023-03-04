@@ -3,6 +3,7 @@ package net.lenni0451.mcping.pings.impl;
 import com.google.gson.JsonObject;
 import net.lenni0451.mcping.ServerAddress;
 import net.lenni0451.mcping.exception.PacketReadException;
+import net.lenni0451.mcping.exception.ReadTimeoutException;
 import net.lenni0451.mcping.pings.ATCPPing;
 import net.lenni0451.mcping.pings.IStatusListener;
 import net.lenni0451.mcping.pings.PingReference;
@@ -12,6 +13,7 @@ import net.lenni0451.mcping.stream.MCOutputStream;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.Random;
 
 /**
@@ -112,9 +114,13 @@ public class ClassicPing extends ATCPPing {
 
     @Override
     protected void readPacket(MCInputStream is, int packetId, PacketReader packetReader) throws IOException {
-        int packetPacketId = is.readUnsignedByte();
-        if (packetPacketId != packetId) throw new PacketReadException("Expected packet id " + packetId + ", got " + packetPacketId);
-        packetReader.read(is);
+        try {
+            int packetPacketId = is.readUnsignedByte();
+            if (packetPacketId != packetId) throw new PacketReadException("Expected packet id " + packetId + ", got " + packetPacketId);
+            packetReader.read(is);
+        } catch (SocketTimeoutException e) {
+            throw new ReadTimeoutException(this.readTimeout);
+        }
     }
 
     private String generateRandomName() {

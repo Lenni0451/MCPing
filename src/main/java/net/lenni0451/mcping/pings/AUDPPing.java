@@ -1,10 +1,12 @@
 package net.lenni0451.mcping.pings;
 
 import net.lenni0451.mcping.ServerAddress;
+import net.lenni0451.mcping.exception.ReadTimeoutException;
 
 import java.io.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.SocketTimeoutException;
 import java.util.Arrays;
 
 /**
@@ -59,7 +61,11 @@ public abstract class AUDPPing extends APing {
      */
     protected void readPacket(final DatagramSocket s, final int bufferSize, PacketReader packetReader) throws IOException {
         DatagramPacket packet = new DatagramPacket(new byte[bufferSize], bufferSize);
-        s.receive(packet);
+        try {
+            s.receive(packet);
+        } catch (SocketTimeoutException e) {
+            throw new ReadTimeoutException(this.readTimeout);
+        }
         DataInputStream is = new DataInputStream(new ByteArrayInputStream(Arrays.copyOfRange(packet.getData(), 0, packet.getLength())));
 
         packetReader.read(is);

@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.lenni0451.mcping.ServerAddress;
 import net.lenni0451.mcping.exception.PacketReadException;
+import net.lenni0451.mcping.exception.ReadTimeoutException;
 import net.lenni0451.mcping.pings.ATCPPing;
 import net.lenni0451.mcping.pings.IStatusListener;
 import net.lenni0451.mcping.pings.PingReference;
@@ -15,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 /**
  * The ping implementation for the modern edition.<br>
@@ -82,14 +84,18 @@ public class ModernPing extends ATCPPing {
     }
 
     protected void readPacket(final MCInputStream is, final int packetId, final PacketReader packetReader) throws IOException {
-        int packetLength = is.readVarInt();
-        byte[] packetData = new byte[packetLength];
-        is.readFully(packetData);
-        MCInputStream packetIs = new MCInputStream(new ByteArrayInputStream(packetData));
+        try {
+            int packetLength = is.readVarInt();
+            byte[] packetData = new byte[packetLength];
+            is.readFully(packetData);
+            MCInputStream packetIs = new MCInputStream(new ByteArrayInputStream(packetData));
 
-        int packetPacketId = packetIs.readVarInt();
-        if (packetPacketId != packetId) throw new PacketReadException("Expected packet id " + packetId + ", got " + packetPacketId);
-        packetReader.read(packetIs);
+            int packetPacketId = packetIs.readVarInt();
+            if (packetPacketId != packetId) throw new PacketReadException("Expected packet id " + packetId + ", got " + packetPacketId);
+            packetReader.read(packetIs);
+        } catch (SocketTimeoutException e) {
+            throw new ReadTimeoutException(this.readTimeout);
+        }
     }
 
 }
