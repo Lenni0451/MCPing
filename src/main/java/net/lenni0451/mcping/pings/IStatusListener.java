@@ -3,6 +3,7 @@ package net.lenni0451.mcping.pings;
 import net.lenni0451.mcping.exception.*;
 import net.lenni0451.mcping.responses.IPingResponse;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
@@ -26,6 +27,7 @@ public interface IStatusListener {
      * {@link DataReadException} - The server responded with invalid data<br>
      * {@link PacketReadException} - The server responded with invalid packets<br>
      * {@link ReadTimeoutException} - The server did not respond in time<br>
+     * {@link EOFException} - The stream was closed before the server responded<br>
      * {@link IOException} - An unknown I/O error occurred
      *
      * @param throwable The thrown exception
