@@ -41,7 +41,8 @@ public class MCPing<R extends IPingResponse> {
 
     /**
      * Ping a server using the legacy ping protocol.<br>
-     * Defaults to the protocol version of the given version ({@link LegacyPing.Version#getDefaultId()}).
+     * Defaults to the protocol version of the given version ({@link LegacyPing.Version#getDefaultId()}).<br>
+     * Versions between b1.8 and 1.2 are not resolving the address by default.
      *
      * @param version The version of the protocol
      * @return The legacy ping builder
@@ -51,26 +52,30 @@ public class MCPing<R extends IPingResponse> {
     }
 
     /**
-     * Ping a server using the legacy ping protocol.
+     * Ping a server using the legacy ping protocol.<br>
+     * Versions between b1.8 and 1.2 are not resolving the address by default.
      *
      * @param version         The version of the protocol
      * @param protocolVersion The protocol version to use
      * @return The legacy ping builder
      */
     public static MCPing<MCPingResponse> pingLegacy(final LegacyPing.Version version, final int protocolVersion) {
-        return new MCPing<>(ping -> new LegacyPing(ping.connectTimeout, ping.readTimeout, version, protocolVersion));
+        MCPing<MCPingResponse> mcPing = new MCPing<>(ping -> new LegacyPing(ping.connectTimeout, ping.readTimeout, version, protocolVersion));
+        if (LegacyPing.Version.B1_8.equals(version)) mcPing.noResolve();
+        return mcPing;
     }
 
 
     /**
      * Ping a server using the classic protocol.<br>
+     * Resolving the address is disabled by default.<br>
      * <b>This visibly connects a client to the server causing a disconnect message.</b>
      *
      * @param version The version of the protocol
      * @return The classic ping builder
      */
     public static MCPing<ClassicPingResponse> pingClassic(final ClassicPing.Version version) {
-        return new MCPing<>(ping -> new ClassicPing(ping.connectTimeout, ping.readTimeout, version));
+        return new MCPing<ClassicPingResponse>(ping -> new ClassicPing(ping.connectTimeout, ping.readTimeout, version)).noResolve();
     }
 
 
@@ -96,12 +101,13 @@ public class MCPing<R extends IPingResponse> {
 
 
     /**
-     * Ping a server using the bedrock protocol.
+     * Ping a server using the bedrock protocol.<br>
+     * Resolving the address is disabled by default.
      *
      * @return The bedrock ping builder
      */
     public static MCPing<BedrockPingResponse> pingBedrock() {
-        return new MCPing<>(ping -> new BedrockPing(ping.readTimeout));
+        return new MCPing<BedrockPingResponse>(ping -> new BedrockPing(ping.readTimeout)).noResolve();
     }
 
 
