@@ -53,15 +53,33 @@ public class ServerAddress {
     }
 
 
+    private final String unresolvedHost;
+    private final int unresolvedPort;
     private String host;
     private int port;
     private final int defaultPort;
     private boolean resolved;
 
     private ServerAddress(final String host, final int port, final int defaultPort) {
+        this.unresolvedHost = host;
+        this.unresolvedPort = port;
         this.host = host;
         this.port = port;
         this.defaultPort = defaultPort;
+    }
+
+    /**
+     * @return The unresolved host of the server
+     */
+    public String getUnresolvedHost() {
+        return this.unresolvedHost;
+    }
+
+    /**
+     * @return The unresolved port of the server
+     */
+    public int getUnresolvedPort() {
+        return this.unresolvedPort;
     }
 
     /**

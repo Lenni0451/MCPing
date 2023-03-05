@@ -15,6 +15,7 @@ import net.lenni0451.mcping.stream.MCOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
@@ -43,8 +44,20 @@ public class ModernPing extends ATCPPing {
             MCPingResponse[] pingResponse = new MCPingResponse[1];
             this.writePacket(os, 0, packetOs -> {
                 packetOs.writeVarInt(this.protocolVersion);
-                packetOs.writeVarString(serverAddress.getHost());
-                packetOs.writeShort(serverAddress.getPort());
+                if (this.protocolVersion <= 754) { // <= 1.16.5
+                    // Minecraft <= 1.16.5 sends the resolved host and port
+                    packetOs.writeVarString(serverAddress.getHost());
+                    packetOs.writeShort(serverAddress.getPort());
+                } else if (this.protocolVersion == 755) { // 1.17
+                    // Minecraft 1.17 sends the unresolved host and port
+                    packetOs.writeVarString(serverAddress.getUnresolvedHost());
+                    packetOs.writeShort(serverAddress.getUnresolvedPort());
+                } else { // >= 1.17.1
+                    // Minecraft >= 1.17.1 sends the host and port from the resolved inet socket address
+                    InetSocketAddress address = serverAddress.toInetSocketAddress();
+                    packetOs.writeVarString(address.getHostName());
+                    packetOs.writeShort(address.getPort());
+                }
                 packetOs.writeVarInt(1);
             });
             this.writePacket(os, 0, packetOs -> {
