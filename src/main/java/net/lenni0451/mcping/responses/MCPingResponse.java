@@ -11,6 +11,7 @@ import java.util.Arrays;
 public class MCPingResponse implements IPingResponse {
 
     public String description;
+    public String favicon;
     public Server server;
     public Boolean previewsChat;
     public Version version;
@@ -22,6 +23,7 @@ public class MCPingResponse implements IPingResponse {
     public String toString() {
         return "MCPingResponse{" +
                 "description='" + description + '\'' +
+                ", favicon='" + favicon + '\'' +
                 ", server=" + server +
                 ", previewsChat=" + previewsChat +
                 ", version=" + version +
