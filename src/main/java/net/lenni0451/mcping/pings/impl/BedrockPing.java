@@ -51,7 +51,7 @@ public class BedrockPing extends AUDPPing {
                 pingReference.stop();
 
                 int packetId = packetIs.readUnsignedByte();
-                if (packetId != 28) throw new PacketReadException("Expected packet id 28, got " + packetId);
+                if (packetId != 28) throw PacketReadException.wrongPacketId(28, packetId);
                 byte[] readMagic = new byte[RAKNET_UNCONNECTED_MAGIC.length];
 
                 packetIs.readLong();

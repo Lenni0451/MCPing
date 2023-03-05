@@ -65,7 +65,7 @@ public abstract class ATCPPing extends APing {
             s.connect(serverAddress.toInetSocketAddress(), this.connectTimeout);
             return s;
         } catch (ConnectException e) {
-            throw new ConnectionRefusedException();
+            throw new ConnectionRefusedException(serverAddress);
         } catch (SocketTimeoutException e) {
             throw new ConnectTimeoutException(this.connectTimeout);
         }

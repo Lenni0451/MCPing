@@ -91,7 +91,7 @@ public class ModernPing extends ATCPPing {
             MCInputStream packetIs = new MCInputStream(new ByteArrayInputStream(packetData));
 
             int packetPacketId = packetIs.readVarInt();
-            if (packetPacketId != packetId) throw new PacketReadException("Expected packet id " + packetId + ", got " + packetPacketId);
+            if (packetPacketId != packetId) throw PacketReadException.wrongPacketId(packetId, packetPacketId);
             packetReader.read(packetIs);
         } catch (SocketTimeoutException e) {
             throw new ReadTimeoutException(this.readTimeout);

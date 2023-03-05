@@ -37,7 +37,7 @@ public class MCInputStream extends DataInputStream {
         do {
             b = this.readByte();
             i |= (b & 127) << j++ * 7;
-            if (j > 5) throw new DataReadException("VarInt too big");
+            if (j > 5) throw new DataReadException("Var int too big");
         } while ((b & 128) == 128);
 
         return i;
@@ -54,13 +54,13 @@ public class MCInputStream extends DataInputStream {
      */
     public String readVarString(final int maxLength) throws IOException {
         int length = this.readVarInt();
-        if (length > maxLength * 4) throw new DataReadException("The received encoded string buffer is longer than maximum allowed (" + length + " > " + maxLength * 4 + ")");
-        if (length < 0) throw new DataReadException("The received encoded string buffer is shorter than zero!");
+        if (length > maxLength * 4) throw new DataReadException("Encoded string buffer is larger than allowed (" + length + " > " + (maxLength * 4) + ")");
+        if (length < 0) throw new DataReadException("Encoded string buffer is smaller than allowed (" + length + " < 0)");
 
         byte[] bytes = new byte[length];
         this.readFully(bytes);
         String string = new String(bytes, StandardCharsets.UTF_8);
-        if (string.length() > maxLength) throw new DataReadException("The received string is longer than maximum allowed (" + length + " > " + maxLength + ")");
+        if (string.length() > maxLength) throw new DataReadException("String is longer than allowed (" + length + " > " + maxLength + ")");
         else return string;
     }
 
@@ -74,7 +74,7 @@ public class MCInputStream extends DataInputStream {
      */
     public String readLegacyString() throws IOException {
         int length = this.readShort();
-        if (length < 0) throw new DataReadException("The received encoded string buffer is shorter than zero!");
+        if (length < 0) throw new DataReadException("Encoded string buffer is smaller than allowed (" + length + " < 0)");
 
         char[] chars = new char[length];
         for (int i = 0; i < length; i++) chars[i] = this.readChar();

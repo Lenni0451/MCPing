@@ -112,7 +112,7 @@ public class LegacyPing extends ATCPPing {
     protected void readPacket(MCInputStream is, int packetId, PacketReader packetReader) throws IOException {
         try {
             int packetPacketId = is.readUnsignedByte();
-            if (packetPacketId != packetId) throw new PacketReadException("Expected packet id " + packetId + ", got " + packetPacketId);
+            if (packetPacketId != packetId) throw PacketReadException.wrongPacketId(packetId, packetPacketId);
             packetReader.read(is);
         } catch (SocketTimeoutException e) {
             throw new ReadTimeoutException(this.readTimeout);

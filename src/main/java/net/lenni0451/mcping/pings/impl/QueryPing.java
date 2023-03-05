@@ -51,7 +51,7 @@ public class QueryPing extends AUDPPing {
             });
             this.readPacket(s, 32, packetIs -> {
                 int id = packetIs.readByte();
-                if (id != 9) throw new PacketReadException("Expected packet id 9, got " + id);
+                if (id != 9) throw PacketReadException.wrongPacketId(9, id);
                 int sessionIdResponse = packetIs.readInt();
                 if (sessionIdResponse != sessionId) throw new PacketReadException("Invalid session id: " + sessionIdResponse);
 
@@ -81,7 +81,7 @@ public class QueryPing extends AUDPPing {
             pingReference.stop();
 
             int id = packetIs.readByte();
-            if (id != 0) throw new PacketReadException("Expected packet id 0, got " + id);
+            if (id != 0) throw PacketReadException.wrongPacketId(0, id);
             int sessionIdResponse = packetIs.readInt();
             if (sessionIdResponse != sessionId) throw new PacketReadException("Invalid session id: " + sessionIdResponse);
 
@@ -129,7 +129,7 @@ public class QueryPing extends AUDPPing {
             pingReference.stop();
 
             int id = packetIs.readByte();
-            if (id != 0) throw new PacketReadException("Expected packet id 0, got " + id);
+            if (id != 0) throw PacketReadException.wrongPacketId(0, id);
             int sessionIdResponse = packetIs.readInt();
             if (sessionIdResponse != sessionId) throw new PacketReadException("Invalid session id: " + sessionIdResponse);
             packetIs.skipBytes(11);
