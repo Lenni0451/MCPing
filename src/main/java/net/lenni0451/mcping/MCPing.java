@@ -361,9 +361,10 @@ public class MCPing<R extends IPingResponse> {
             this.thread.start();
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public boolean cancel(boolean mayInterruptIfRunning) {
-            if (mayInterruptIfRunning) this.thread.interrupt();
+            if (mayInterruptIfRunning) this.thread.stop();
             return super.cancel(mayInterruptIfRunning);
         }
     }
