@@ -1,6 +1,10 @@
 package net.lenni0451.mcping.pings;
 
+import net.lenni0451.mcping.exception.*;
 import net.lenni0451.mcping.responses.IPingResponse;
+
+import java.io.IOException;
+import java.net.UnknownHostException;
 
 /**
  * The interface used to listen for the status of a ping.<br>
@@ -14,7 +18,15 @@ import net.lenni0451.mcping.responses.IPingResponse;
 public interface IStatusListener {
 
     /**
-     * Called when the ping failed with an exception.
+     * Called when the ping failed with an exception.<br>
+     * Common exceptions:<br>
+     * {@link ConnectionRefusedException} - The connection was refused by the server (unbound port, firewall, etc.)<br>
+     * {@link UnknownHostException} - The server address is invalid or the server is offline<br>
+     * {@link ConnectTimeoutException} - The connect timed out (server is offline or the connection is too slow)<br>
+     * {@link DataReadException} - The server responded with invalid data<br>
+     * {@link PacketReadException} - The server responded with invalid packets<br>
+     * {@link ReadTimeoutException} - The server did not respond in time<br>
+     * {@link IOException} - An unknown I/O error occurred
      *
      * @param throwable The thrown exception
      */

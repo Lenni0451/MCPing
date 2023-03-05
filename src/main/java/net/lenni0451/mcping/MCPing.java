@@ -244,6 +244,7 @@ public class MCPing<R extends IPingResponse> {
 
     /**
      * Set a dedicated exception handler.<br>
+     * See {@link IStatusListener#onError(Throwable)} for common exceptions and their cause.<br>
      * <b>IMPORTANT!</b> See {@link IStatusListener} for more information about the response special cases.
      *
      * @param exceptionHandler The exception handler
