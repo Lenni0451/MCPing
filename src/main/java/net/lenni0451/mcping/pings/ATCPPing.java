@@ -3,10 +3,12 @@ package net.lenni0451.mcping.pings;
 import com.google.gson.JsonObject;
 import net.lenni0451.mcping.ServerAddress;
 import net.lenni0451.mcping.exception.ConnectTimeoutException;
+import net.lenni0451.mcping.exception.ConnectionRefusedException;
 import net.lenni0451.mcping.stream.MCInputStream;
 import net.lenni0451.mcping.stream.MCOutputStream;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
@@ -52,8 +54,9 @@ public abstract class ATCPPing extends APing {
      *
      * @param serverAddress The server address
      * @return The connected socket
-     * @throws IOException             If an I/O error occurs
-     * @throws ConnectTimeoutException If the connection timed out
+     * @throws IOException                If an I/O error occurs
+     * @throws ConnectTimeoutException    If the connection timed out
+     * @throws ConnectionRefusedException If the connection was refused
      */
     protected final Socket connect(final ServerAddress serverAddress) throws IOException {
         try {
@@ -61,6 +64,8 @@ public abstract class ATCPPing extends APing {
             s.setSoTimeout(this.readTimeout);
             s.connect(serverAddress.toInetSocketAddress(), this.connectTimeout);
             return s;
+        } catch (ConnectException e) {
+            throw new ConnectionRefusedException();
         } catch (SocketTimeoutException e) {
             throw new ConnectTimeoutException(this.connectTimeout);
         }
