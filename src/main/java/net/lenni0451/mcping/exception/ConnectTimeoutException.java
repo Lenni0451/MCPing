@@ -7,7 +7,7 @@ public class ConnectTimeoutException extends IOException {
     private final int connectionTimeout;
 
     public ConnectTimeoutException(final int connectionTimeout) {
-        super("Connect timed out (" + connectionTimeout + " ms)");
+        super("Connect timed out (> " + connectionTimeout + " ms)");
         this.connectionTimeout = connectionTimeout;
     }
 

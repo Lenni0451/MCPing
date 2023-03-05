@@ -7,7 +7,7 @@ public class ReadTimeoutException extends IOException {
     private final int readTimeout;
 
     public ReadTimeoutException(final int readTimeout) {
-        super("Read timed out (" + readTimeout + " ms)");
+        super("Read timed out (> " + readTimeout + " ms)");
         this.readTimeout = readTimeout;
     }
 
