@@ -13,6 +13,7 @@ import net.lenni0451.mcping.responses.MCPingResponse;
 import net.lenni0451.mcping.stream.MCInputStream;
 import net.lenni0451.mcping.stream.MCOutputStream;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 
@@ -64,22 +65,29 @@ public class LegacyPing extends ATCPPing {
                 this.prepareResponse(serverAddress, ping);
                 ping.getAsJsonObject("server").addProperty("ping", pingReference.get());
 
-                if (this.version.equals(Version.V1_5) || this.version.equals(Version.V1_6)) {
-                    String[] parts = packetIs.readLegacyString().split("\0");
+                String response = packetIs.readLegacyString();
+                if (response.startsWith("§") && (this.version.equals(Version.V1_5) || this.version.equals(Version.V1_6))) {
+                    String[] parts = response.substring(1).split("\0");
                     JsonObject players = new JsonObject();
                     JsonObject version = new JsonObject();
 
-                    version.addProperty("protocol", Integer.parseInt(parts[1]));
-                    version.addProperty("name", parts[2]);
+                    if (parts[0].equals("1")) {
+                        version.addProperty("protocol", Integer.parseInt(parts[1]));
+                        version.addProperty("name", parts[2]);
+                        ping.addProperty("description", parts[3]);
+                        players.addProperty("online", Integer.parseInt(parts[4]));
+                        players.addProperty("max", Integer.parseInt(parts[5]));
+                    } else {
+                        version.addProperty("protocol", -1);
+                        version.addProperty("name", "Unknown (Invalid/Legacy)");
+                        ping.addProperty("description", "Invalid/Legacy");
+                        players.addProperty("online", 0);
+                        players.addProperty("max", 0);
+                    }
                     ping.add("version", version);
-
-                    ping.addProperty("description", parts[3]);
-
-                    players.addProperty("online", Integer.parseInt(parts[4]));
-                    players.addProperty("max", Integer.parseInt(parts[5]));
                     ping.add("players", players);
                 } else {
-                    String[] parts = packetIs.readLegacyString().split("§");
+                    String[] parts = response.split("§");
                     JsonObject players = new JsonObject();
                     JsonObject version = new JsonObject();
 
@@ -105,8 +113,14 @@ public class LegacyPing extends ATCPPing {
 
     @Override
     protected void writePacket(MCOutputStream os, int packetId, PacketWriter packetWriter) throws IOException {
-        os.writeByte(packetId);
-        packetWriter.write(os);
+        //Old minecraft versions wrote the bytes in one batch.
+        //Modern servers require this behavior to be able to handle the packet correctly.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        MCOutputStream packetOs = new MCOutputStream(baos);
+        packetOs.writeByte(packetId);
+        packetWriter.write(packetOs);
+
+        os.write(baos.toByteArray());
     }
 
     @Override
