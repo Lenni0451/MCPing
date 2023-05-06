@@ -46,7 +46,7 @@ public class LegacyPing extends ATCPPing {
 
             PingReference pingReference = new PingReference();
             this.writePacket(os, 254, packetOs -> {
-                if (this.version.equals(Version.B1_8) || this.version.equals(Version.V1_3)) packetOs.writeByte(1);
+                if (this.version.equals(Version.V1_5) || this.version.equals(Version.V1_6)) packetOs.writeByte(1);
                 if (this.version.equals(Version.V1_6)) {
                     packetOs.writeByte(250);
                     packetOs.writeLegacyString(PING_CHANNEL);
