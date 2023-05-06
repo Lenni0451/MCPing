@@ -5,11 +5,10 @@ import net.lenni0451.mcping.ServerAddress;
 import net.lenni0451.mcping.pings.ATCPPing;
 import net.lenni0451.mcping.pings.IStatusListener;
 import net.lenni0451.mcping.pings.PingReference;
+import net.lenni0451.mcping.pings.sockets.types.ITCPSocket;
 import net.lenni0451.mcping.responses.SocketPingResponse;
 import net.lenni0451.mcping.stream.MCInputStream;
 import net.lenni0451.mcping.stream.MCOutputStream;
-
-import java.net.Socket;
 
 /**
  * The ping implementation for the socket ping.<br>
@@ -30,7 +29,7 @@ public class SocketPing extends ATCPPing {
     public void ping(ServerAddress serverAddress, IStatusListener statusListener) {
         PingReference pingReference = new PingReference();
         pingReference.start();
-        try (Socket ignored = this.connect(serverAddress)) {
+        try (ITCPSocket ignored = this.connect(serverAddress)) {
             statusListener.onConnected();
             pingReference.stop();
             JsonObject ping = new JsonObject();

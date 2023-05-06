@@ -6,9 +6,9 @@ import net.lenni0451.mcping.exception.PacketReadException;
 import net.lenni0451.mcping.pings.AUDPPing;
 import net.lenni0451.mcping.pings.IStatusListener;
 import net.lenni0451.mcping.pings.PingReference;
+import net.lenni0451.mcping.pings.sockets.types.IUDPSocket;
 import net.lenni0451.mcping.responses.BedrockPingResponse;
 
-import java.net.DatagramSocket;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Random;
@@ -34,12 +34,12 @@ public class BedrockPing extends AUDPPing {
 
     @Override
     public void ping(ServerAddress serverAddress, IStatusListener statusListener) {
-        try (DatagramSocket s = this.connect()) {
+        try (IUDPSocket s = this.connect(serverAddress)) {
             statusListener.onConnected();
             long sessionId = this.rnd.nextLong();
 
             PingReference pingReference = new PingReference();
-            this.writePacket(s, serverAddress, packetOs -> {
+            this.writePacket(s, packetOs -> {
                 packetOs.writeByte(1);
                 packetOs.writeLong(System.currentTimeMillis());
                 packetOs.write(RAKNET_UNCONNECTED_MAGIC);

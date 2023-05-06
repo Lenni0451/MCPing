@@ -4,13 +4,12 @@ import com.google.gson.JsonObject;
 import net.lenni0451.mcping.ServerAddress;
 import net.lenni0451.mcping.exception.ConnectTimeoutException;
 import net.lenni0451.mcping.exception.ConnectionRefusedException;
+import net.lenni0451.mcping.pings.sockets.impl.types.TCPSocket;
+import net.lenni0451.mcping.pings.sockets.types.ITCPSocket;
 import net.lenni0451.mcping.stream.MCInputStream;
 import net.lenni0451.mcping.stream.MCOutputStream;
 
 import java.io.IOException;
-import java.net.ConnectException;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
 
 /**
  * The abstract class used to implement TCP based pings.
@@ -58,17 +57,8 @@ public abstract class ATCPPing extends APing {
      * @throws ConnectTimeoutException    If the connection timed out
      * @throws ConnectionRefusedException If the connection was refused
      */
-    protected final Socket connect(final ServerAddress serverAddress) throws IOException {
-        try {
-            Socket s = new Socket();
-            s.setSoTimeout(this.readTimeout);
-            s.connect(serverAddress.toInetSocketAddress(), this.connectTimeout);
-            return s;
-        } catch (ConnectException e) {
-            throw new ConnectionRefusedException(serverAddress);
-        } catch (SocketTimeoutException e) {
-            throw new ConnectTimeoutException(this.connectTimeout);
-        }
+    protected final ITCPSocket connect(final ServerAddress serverAddress) throws IOException {
+        return new TCPSocket(serverAddress, this.connectTimeout, this.readTimeout);
     }
 
     /**

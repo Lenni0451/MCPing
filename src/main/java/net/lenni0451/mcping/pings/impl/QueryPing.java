@@ -7,11 +7,11 @@ import net.lenni0451.mcping.exception.PacketReadException;
 import net.lenni0451.mcping.pings.AUDPPing;
 import net.lenni0451.mcping.pings.IStatusListener;
 import net.lenni0451.mcping.pings.PingReference;
+import net.lenni0451.mcping.pings.sockets.types.IUDPSocket;
 import net.lenni0451.mcping.responses.QueryPingResponse;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.net.DatagramSocket;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
@@ -39,12 +39,12 @@ public class QueryPing extends AUDPPing {
 
     @Override
     public void ping(ServerAddress serverAddress, IStatusListener statusListener) {
-        try (DatagramSocket s = this.connect()) {
+        try (IUDPSocket s = this.connect(serverAddress)) {
             statusListener.onConnected();
             int sessionId = (this.rnd.nextInt((0x7FFFFFFF - 0x1) + 1) + 0x1) & 0x0F0F0F0F;
             int[] challengeToken = new int[1];
 
-            this.writePacket(s, serverAddress, packetOs -> {
+            this.writePacket(s, packetOs -> {
                 packetOs.write(MAGIC_BYTES);
                 packetOs.write(9);
                 packetOs.writeInt(sessionId);
@@ -67,9 +67,9 @@ public class QueryPing extends AUDPPing {
         }
     }
 
-    private void requestQuery(final DatagramSocket s, final ServerAddress serverAddress, final IStatusListener statusListener, final int sessionId, final int challengeToken) throws IOException {
+    private void requestQuery(final IUDPSocket s, final ServerAddress serverAddress, final IStatusListener statusListener, final int sessionId, final int challengeToken) throws IOException {
         PingReference pingReference = new PingReference();
-        this.writePacket(s, serverAddress, packetOs -> {
+        this.writePacket(s, packetOs -> {
             packetOs.write(MAGIC_BYTES);
             packetOs.write(0);
             packetOs.writeInt(sessionId);
@@ -114,9 +114,9 @@ public class QueryPing extends AUDPPing {
         });
     }
 
-    private void requestFullQuery(final DatagramSocket s, final ServerAddress serverAddress, final IStatusListener statusListener, final int sessionId, final int challengeToken) throws IOException {
+    private void requestFullQuery(final IUDPSocket s, final ServerAddress serverAddress, final IStatusListener statusListener, final int sessionId, final int challengeToken) throws IOException {
         PingReference pingReference = new PingReference();
-        this.writePacket(s, serverAddress, packetOs -> {
+        this.writePacket(s, packetOs -> {
             packetOs.write(MAGIC_BYTES);
             packetOs.write(0);
             packetOs.writeInt(sessionId);
