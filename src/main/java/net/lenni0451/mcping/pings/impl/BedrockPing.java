@@ -6,6 +6,7 @@ import net.lenni0451.mcping.exception.PacketReadException;
 import net.lenni0451.mcping.pings.AUDPPing;
 import net.lenni0451.mcping.pings.IStatusListener;
 import net.lenni0451.mcping.pings.PingReference;
+import net.lenni0451.mcping.pings.sockets.factories.IUDPSocketFactory;
 import net.lenni0451.mcping.pings.sockets.types.IUDPSocket;
 import net.lenni0451.mcping.responses.BedrockPingResponse;
 
@@ -23,8 +24,8 @@ public class BedrockPing extends AUDPPing {
 
     private final Random rnd = new Random();
 
-    public BedrockPing(final int readTimeout) {
-        super(readTimeout);
+    public BedrockPing(final IUDPSocketFactory socketFactory, final int readTimeout) {
+        super(socketFactory, readTimeout);
     }
 
     @Override

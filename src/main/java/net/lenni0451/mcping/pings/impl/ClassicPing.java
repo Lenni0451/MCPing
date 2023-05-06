@@ -7,6 +7,7 @@ import net.lenni0451.mcping.exception.ReadTimeoutException;
 import net.lenni0451.mcping.pings.ATCPPing;
 import net.lenni0451.mcping.pings.IStatusListener;
 import net.lenni0451.mcping.pings.PingReference;
+import net.lenni0451.mcping.pings.sockets.factories.ITCPSocketFactory;
 import net.lenni0451.mcping.pings.sockets.types.ITCPSocket;
 import net.lenni0451.mcping.responses.ClassicPingResponse;
 import net.lenni0451.mcping.stream.MCInputStream;
@@ -56,8 +57,8 @@ public class ClassicPing extends ATCPPing {
 
     private final Version version;
 
-    public ClassicPing(final int connectTimeout, final int readTimeout, final Version version) {
-        super(connectTimeout, readTimeout, version.getProtocolId());
+    public ClassicPing(final ITCPSocketFactory socketFactory, final int connectTimeout, final int readTimeout, final Version version) {
+        super(socketFactory, connectTimeout, readTimeout, version.getProtocolId());
 
         this.version = version;
     }

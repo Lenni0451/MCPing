@@ -7,6 +7,7 @@ import net.lenni0451.mcping.exception.ReadTimeoutException;
 import net.lenni0451.mcping.pings.ATCPPing;
 import net.lenni0451.mcping.pings.IStatusListener;
 import net.lenni0451.mcping.pings.PingReference;
+import net.lenni0451.mcping.pings.sockets.factories.ITCPSocketFactory;
 import net.lenni0451.mcping.pings.sockets.types.ITCPSocket;
 import net.lenni0451.mcping.responses.MCPingResponse;
 import net.lenni0451.mcping.stream.MCInputStream;
@@ -25,8 +26,8 @@ public class LegacyPing extends ATCPPing {
 
     private final Version version;
 
-    public LegacyPing(final int connectTimeout, final int readTimeout, final Version version, final int protocolVersion) {
-        super(connectTimeout, readTimeout, protocolVersion);
+    public LegacyPing(final ITCPSocketFactory socketFactory, final int connectTimeout, final int readTimeout, final Version version, final int protocolVersion) {
+        super(socketFactory, connectTimeout, readTimeout, protocolVersion);
 
         this.version = version;
     }

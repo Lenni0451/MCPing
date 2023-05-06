@@ -5,6 +5,7 @@ import net.lenni0451.mcping.ServerAddress;
 import net.lenni0451.mcping.pings.ATCPPing;
 import net.lenni0451.mcping.pings.IStatusListener;
 import net.lenni0451.mcping.pings.PingReference;
+import net.lenni0451.mcping.pings.sockets.factories.ITCPSocketFactory;
 import net.lenni0451.mcping.pings.sockets.types.ITCPSocket;
 import net.lenni0451.mcping.responses.SocketPingResponse;
 import net.lenni0451.mcping.stream.MCInputStream;
@@ -16,8 +17,8 @@ import net.lenni0451.mcping.stream.MCOutputStream;
  */
 public class SocketPing extends ATCPPing {
 
-    public SocketPing(final int connectTimeout) {
-        super(connectTimeout, 10_000, 0);
+    public SocketPing(final ITCPSocketFactory socketFactory, final int connectTimeout) {
+        super(socketFactory, connectTimeout, 10_000, 0);
     }
 
     @Override

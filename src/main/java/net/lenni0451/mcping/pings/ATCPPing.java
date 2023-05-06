@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import net.lenni0451.mcping.ServerAddress;
 import net.lenni0451.mcping.exception.ConnectTimeoutException;
 import net.lenni0451.mcping.exception.ConnectionRefusedException;
-import net.lenni0451.mcping.pings.sockets.impl.types.TCPSocket;
+import net.lenni0451.mcping.pings.sockets.factories.ITCPSocketFactory;
 import net.lenni0451.mcping.pings.sockets.types.ITCPSocket;
 import net.lenni0451.mcping.stream.MCInputStream;
 import net.lenni0451.mcping.stream.MCOutputStream;
@@ -16,16 +16,30 @@ import java.io.IOException;
  */
 public abstract class ATCPPing extends APing {
 
+    protected final ITCPSocketFactory socketFactory;
     protected final int connectTimeout;
     protected final int readTimeout;
     protected final int protocolVersion;
 
-    public ATCPPing(final int connectTimeout, final int readTimeout, final int protocolVersion) {
+    public ATCPPing(final ITCPSocketFactory socketFactory, final int connectTimeout, final int readTimeout, final int protocolVersion) {
+        this.socketFactory = socketFactory;
         this.connectTimeout = connectTimeout;
         this.readTimeout = readTimeout;
         this.protocolVersion = protocolVersion;
     }
 
+    /**
+     * Connect a socket to the given server address.
+     *
+     * @param serverAddress The server address
+     * @return The connected socket
+     * @throws IOException                If an I/O error occurs
+     * @throws ConnectTimeoutException    If the connection timed out
+     * @throws ConnectionRefusedException If the connection was refused
+     */
+    protected final ITCPSocket connect(final ServerAddress serverAddress) throws IOException {
+        return this.socketFactory.create(serverAddress, this.connectTimeout, this.readTimeout);
+    }
 
     /**
      * Write a packet to the output stream.
@@ -46,20 +60,6 @@ public abstract class ATCPPing extends APing {
      * @throws IOException If an I/O error occurs
      */
     protected abstract void readPacket(final MCInputStream is, final int packetId, final PacketReader packetReader) throws IOException;
-
-
-    /**
-     * Connect a socket to the given server address.
-     *
-     * @param serverAddress The server address
-     * @return The connected socket
-     * @throws IOException                If an I/O error occurs
-     * @throws ConnectTimeoutException    If the connection timed out
-     * @throws ConnectionRefusedException If the connection was refused
-     */
-    protected final ITCPSocket connect(final ServerAddress serverAddress) throws IOException {
-        return new TCPSocket(serverAddress, this.connectTimeout, this.readTimeout);
-    }
 
     /**
      * Prepare the response by adding default server information.<br>

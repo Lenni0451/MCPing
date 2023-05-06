@@ -1,7 +1,7 @@
 package net.lenni0451.mcping.pings;
 
 import net.lenni0451.mcping.ServerAddress;
-import net.lenni0451.mcping.pings.sockets.impl.types.UDPSocket;
+import net.lenni0451.mcping.pings.sockets.factories.IUDPSocketFactory;
 import net.lenni0451.mcping.pings.sockets.types.IUDPSocket;
 
 import java.io.*;
@@ -11,12 +11,13 @@ import java.io.*;
  */
 public abstract class AUDPPing extends APing {
 
+    private IUDPSocketFactory socketFactory;
     private final int readTimeout;
 
-    public AUDPPing(final int readTimeout) {
+    public AUDPPing(final IUDPSocketFactory socketFactory, final int readTimeout) {
+        this.socketFactory = socketFactory;
         this.readTimeout = readTimeout;
     }
-
 
     /**
      * Create a new datagram socket.
@@ -26,7 +27,7 @@ public abstract class AUDPPing extends APing {
      * @throws IOException If an I/O error occurs
      */
     protected final IUDPSocket connect(final ServerAddress serverAddress) throws IOException {
-        return new UDPSocket(serverAddress, this.readTimeout);
+        return this.socketFactory.create(serverAddress, this.readTimeout);
     }
 
     /**

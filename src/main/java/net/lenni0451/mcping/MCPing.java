@@ -3,6 +3,10 @@ package net.lenni0451.mcping;
 import net.lenni0451.mcping.pings.APing;
 import net.lenni0451.mcping.pings.IStatusListener;
 import net.lenni0451.mcping.pings.impl.*;
+import net.lenni0451.mcping.pings.sockets.factories.ITCPSocketFactory;
+import net.lenni0451.mcping.pings.sockets.factories.IUDPSocketFactory;
+import net.lenni0451.mcping.pings.sockets.impl.factories.TCPSocketFactory;
+import net.lenni0451.mcping.pings.sockets.impl.factories.UDPSocketFactory;
 import net.lenni0451.mcping.responses.*;
 
 import java.net.InetAddress;
@@ -35,7 +39,7 @@ public class MCPing<R extends IPingResponse> {
      * @return The modern ping builder
      */
     public static MCPing<MCPingResponse> pingModern(final int protocolVersion) {
-        return new MCPing<>(ping -> new ModernPing(ping.connectTimeout, ping.readTimeout, protocolVersion));
+        return new MCPing<>(ping -> new ModernPing(ping.tcpSocketFactory, ping.connectTimeout, ping.readTimeout, protocolVersion));
     }
 
 
@@ -60,7 +64,7 @@ public class MCPing<R extends IPingResponse> {
      * @return The legacy ping builder
      */
     public static MCPing<MCPingResponse> pingLegacy(final LegacyPing.Version version, final int protocolVersion) {
-        MCPing<MCPingResponse> mcPing = new MCPing<>(ping -> new LegacyPing(ping.connectTimeout, ping.readTimeout, version, protocolVersion));
+        MCPing<MCPingResponse> mcPing = new MCPing<>(ping -> new LegacyPing(ping.tcpSocketFactory, ping.connectTimeout, ping.readTimeout, version, protocolVersion));
         if (LegacyPing.Version.B1_8.equals(version)) mcPing.noResolve();
         return mcPing;
     }
@@ -75,7 +79,7 @@ public class MCPing<R extends IPingResponse> {
      * @return The classic ping builder
      */
     public static MCPing<ClassicPingResponse> pingClassic(final ClassicPing.Version version) {
-        return new MCPing<ClassicPingResponse>(ping -> new ClassicPing(ping.connectTimeout, ping.readTimeout, version)).noResolve();
+        return new MCPing<ClassicPingResponse>(ping -> new ClassicPing(ping.tcpSocketFactory, ping.connectTimeout, ping.readTimeout, version)).noResolve();
     }
 
 
@@ -96,7 +100,7 @@ public class MCPing<R extends IPingResponse> {
      * @return The query ping builder
      */
     public static MCPing<QueryPingResponse> pingQuery(final boolean full) {
-        return new MCPing<>(ping -> new QueryPing(ping.readTimeout, full));
+        return new MCPing<>(ping -> new QueryPing(ping.udpSocketFactory, ping.readTimeout, full));
     }
 
 
@@ -107,7 +111,7 @@ public class MCPing<R extends IPingResponse> {
      * @return The bedrock ping builder
      */
     public static MCPing<BedrockPingResponse> pingBedrock() {
-        return new MCPing<BedrockPingResponse>(ping -> new BedrockPing(ping.readTimeout)).noResolve();
+        return new MCPing<BedrockPingResponse>(ping -> new BedrockPing(ping.udpSocketFactory, ping.readTimeout)).noResolve();
     }
 
 
@@ -118,12 +122,14 @@ public class MCPing<R extends IPingResponse> {
      * @return The socket ping builder
      */
     public static MCPing<SocketPingResponse> pingSocket() {
-        return new MCPing<>(ping -> new SocketPing(ping.readTimeout));
+        return new MCPing<>(ping -> new SocketPing(ping.tcpSocketFactory, ping.readTimeout));
     }
 
 
     private final Function<MCPing<R>, APing> ping;
-    private ServerAddress serverAddress;
+    private ITCPSocketFactory tcpSocketFactory = new TCPSocketFactory();
+    private IUDPSocketFactory udpSocketFactory = new UDPSocketFactory();
+    private ServerAddress address;
     private boolean resolve = true;
     private int connectTimeout = 5_000;
     private int readTimeout = 10_000;
@@ -138,6 +144,30 @@ public class MCPing<R extends IPingResponse> {
     }
 
     /**
+     * Set the used tcp socket factory.<br>
+     * Defaults to {@link TCPSocketFactory} which uses {@link java.net.Socket} as the socket implementation.
+     *
+     * @param tcpSocketFactory The tcp socket factory to use
+     * @return This builder
+     */
+    public MCPing<R> tcpSocketFactory(final ITCPSocketFactory tcpSocketFactory) {
+        this.tcpSocketFactory = tcpSocketFactory;
+        return this;
+    }
+
+    /**
+     * Set the used udp socket factory.<br>
+     * Defaults to {@link UDPSocketFactory} which uses {@link java.net.DatagramSocket} as the socket implementation.
+     *
+     * @param udpSocketFactory The udp socket factory to use
+     * @return This builder
+     */
+    public MCPing<R> udpSocketFactory(final IUDPSocketFactory udpSocketFactory) {
+        this.udpSocketFactory = udpSocketFactory;
+        return this;
+    }
+
+    /**
      * Set the address of the server to ping.<br>
      * See {@link ServerAddress#parse(String, int)} for more information.
      *
@@ -145,7 +175,7 @@ public class MCPing<R extends IPingResponse> {
      * @return This builder
      */
     public MCPing<R> address(final String address) {
-        this.serverAddress = ServerAddress.parse(address, this.ping.apply(this).getDefaultPort());
+        this.address = ServerAddress.parse(address, this.ping.apply(this).getDefaultPort());
         return this;
     }
 
@@ -158,7 +188,7 @@ public class MCPing<R extends IPingResponse> {
      * @return This builder
      */
     public MCPing<R> address(final String host, final int port) {
-        this.serverAddress = ServerAddress.of(host, port, this.ping.apply(this).getDefaultPort());
+        this.address = ServerAddress.of(host, port, this.ping.apply(this).getDefaultPort());
         return this;
     }
 
@@ -169,7 +199,7 @@ public class MCPing<R extends IPingResponse> {
      * @return This builder
      */
     public MCPing<R> address(final ServerAddress serverAddress) {
-        this.serverAddress = serverAddress;
+        this.address = serverAddress;
         return this;
     }
 
@@ -311,8 +341,8 @@ public class MCPing<R extends IPingResponse> {
      */
     public R getSync() {
         CompletableFuture<R> future = new CompletableFuture<>();
-        if (this.resolve) this.serverAddress.resolve();
-        this.ping.apply(this).ping(this.serverAddress, new StatusListener(future));
+        if (this.resolve) this.address.resolve();
+        this.ping.apply(this).ping(this.address, new StatusListener(future));
         try {
             return future.get();
         } catch (InterruptedException ignored) {
@@ -342,8 +372,8 @@ public class MCPing<R extends IPingResponse> {
     public Future<R> getAsync(final ExecutorService executor) {
         return executor.submit(() -> {
             CompletableFuture<R> future = new CompletableFuture<>();
-            if (this.resolve) this.serverAddress.resolve();
-            this.ping.apply(this).ping(this.serverAddress, new StatusListener(future));
+            if (this.resolve) this.address.resolve();
+            this.ping.apply(this).ping(this.address, new StatusListener(future));
             return future.get();
         });
     }
@@ -354,8 +384,8 @@ public class MCPing<R extends IPingResponse> {
 
         MCPingFuture() {
             this.thread = new Thread(() -> {
-                if (MCPing.this.resolve) MCPing.this.serverAddress.resolve();
-                MCPing.this.ping.apply(MCPing.this).ping(MCPing.this.serverAddress, new StatusListener(this));
+                if (MCPing.this.resolve) MCPing.this.address.resolve();
+                MCPing.this.ping.apply(MCPing.this).ping(MCPing.this.address, new StatusListener(this));
             }, "MCPing Thread");
             this.thread.setDaemon(true);
             this.thread.start();
