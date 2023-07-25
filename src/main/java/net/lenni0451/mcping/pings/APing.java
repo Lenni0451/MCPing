@@ -2,6 +2,7 @@ package net.lenni0451.mcping.pings;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.lenni0451.mcping.ServerAddress;
 
@@ -41,8 +42,8 @@ public abstract class APing {
         server.addProperty("protocol", protocolVersion);
         response.add("server", server);
 
-        if (response.has("description") && response.get("description").isJsonObject()) {
-            JsonObject description = response.get("description").getAsJsonObject();
+        if (response.has("description") && !response.get("description").isJsonPrimitive()) {
+            JsonElement description = response.get("description");
             response.addProperty("description", this.gson.toJson(description));
         }
     }
