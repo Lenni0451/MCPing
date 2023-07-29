@@ -16,7 +16,7 @@ public class MCPingResponse implements IPingResponse {
     public Boolean previewsChat;
     public Version version;
     public Players players;
-    public ModInfo modInfo;
+    public ModInfo modinfo;
     public ForgeData forgeData;
 
     @Override
@@ -28,7 +28,7 @@ public class MCPingResponse implements IPingResponse {
                 ", previewsChat=" + previewsChat +
                 ", version=" + version +
                 ", players=" + players +
-                ", modInfo=" + modInfo +
+                ", modInfo=" + modinfo +
                 ", forgeData=" + forgeData +
                 '}';
     }
