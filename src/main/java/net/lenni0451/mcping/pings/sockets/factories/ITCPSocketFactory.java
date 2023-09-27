@@ -11,7 +11,8 @@ import java.io.IOException;
 public interface ITCPSocketFactory {
 
     /**
-     * Create a new {@link ITCPSocket} instance.
+     * Create a new {@link ITCPSocket} instance.<br>
+     * The socket should not be connected yet.
      *
      * @param serverAddress  The server address to connect to
      * @param connectTimeout The connect timeout
@@ -19,6 +20,6 @@ public interface ITCPSocketFactory {
      * @return The connected socket
      * @throws IOException If an I/O error occurs
      */
-    ITCPSocket create(final ServerAddress serverAddress, final int connectTimeout, final int readTimeout) throws IOException;
+    ITCPSocket create(final ServerAddress serverAddress, final int connectTimeout, final int readTimeout);
 
 }

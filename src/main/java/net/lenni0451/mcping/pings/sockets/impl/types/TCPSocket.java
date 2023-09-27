@@ -17,15 +17,25 @@ import java.net.SocketTimeoutException;
  */
 public class TCPSocket implements ITCPSocket {
 
-    private final Socket socket;
-    private final InputStream inputStream;
-    private final OutputStream outputStream;
+    private final ServerAddress serverAddress;
+    private final int connectTimeout;
+    private final int readTimeout;
+    private Socket socket;
+    private InputStream inputStream;
+    private OutputStream outputStream;
 
-    public TCPSocket(final ServerAddress serverAddress, final int connectTimeout, final int readTimeout) throws IOException {
+    public TCPSocket(final ServerAddress serverAddress, final int connectTimeout, final int readTimeout) {
+        this.serverAddress = serverAddress;
+        this.connectTimeout = connectTimeout;
+        this.readTimeout = readTimeout;
+    }
+
+    @Override
+    public void connect() throws IOException {
         try {
             this.socket = new Socket();
             this.socket.setSoTimeout(readTimeout);
-            this.socket.connect(serverAddress.toInetSocketAddress(), connectTimeout);
+            this.socket.connect(this.serverAddress.toInetSocketAddress(), this.connectTimeout);
 
             this.inputStream = this.socket.getInputStream();
             this.outputStream = this.socket.getOutputStream();

@@ -9,7 +9,7 @@ import net.lenni0451.mcping.ServerAddress;
 /**
  * The abstract class used to implement a ping.
  */
-public abstract class APing {
+public abstract class APing implements AutoCloseable {
 
     protected final Gson gson = new GsonBuilder().create();
 

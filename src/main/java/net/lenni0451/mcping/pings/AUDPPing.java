@@ -13,6 +13,7 @@ public abstract class AUDPPing extends APing {
 
     private IUDPSocketFactory socketFactory;
     private final int readTimeout;
+    private IUDPSocket socket;
 
     public AUDPPing(final IUDPSocketFactory socketFactory, final int readTimeout) {
         this.socketFactory = socketFactory;
@@ -27,7 +28,14 @@ public abstract class AUDPPing extends APing {
      * @throws IOException If an I/O error occurs
      */
     protected final IUDPSocket connect(final ServerAddress serverAddress) throws IOException {
-        return this.socketFactory.create(serverAddress, this.readTimeout);
+        this.socket = this.socketFactory.create(serverAddress, this.readTimeout);
+        this.socket.connect();
+        return this.socket;
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (this.socket != null) this.socket.close();
     }
 
     /**

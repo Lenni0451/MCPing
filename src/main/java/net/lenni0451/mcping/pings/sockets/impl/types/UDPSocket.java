@@ -17,13 +17,17 @@ public class UDPSocket implements IUDPSocket {
 
     private final ServerAddress serverAddress;
     private final int readTimeout;
-    private final DatagramSocket socket;
+    private DatagramSocket socket;
 
-    public UDPSocket(final ServerAddress serverAddress, final int readTimeout) throws IOException {
+    public UDPSocket(final ServerAddress serverAddress, final int readTimeout) {
         this.serverAddress = serverAddress;
         this.readTimeout = readTimeout;
+    }
+
+    @Override
+    public void connect() throws IOException {
         this.socket = new DatagramSocket();
-        this.socket.setSoTimeout(readTimeout);
+        this.socket.setSoTimeout(this.readTimeout);
     }
 
     @Override

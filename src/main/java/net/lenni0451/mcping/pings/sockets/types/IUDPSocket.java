@@ -1,12 +1,18 @@
 package net.lenni0451.mcping.pings.sockets.types;
 
-import java.io.Closeable;
 import java.io.IOException;
 
 /**
  * An interface used to implement UDP sockets. This allows to use different network libraries in MCPing.
  */
-public interface IUDPSocket extends Closeable {
+public interface IUDPSocket extends AutoCloseable {
+
+    /**
+     * Connect the socket to the server.
+     *
+     * @throws IOException If an I/O error occurs
+     */
+    void connect() throws IOException;
 
     /**
      * Send the given data to the target address.

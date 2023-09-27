@@ -20,6 +20,7 @@ public abstract class ATCPPing extends APing {
     protected final int connectTimeout;
     protected final int readTimeout;
     protected final int protocolVersion;
+    private ITCPSocket socket;
 
     public ATCPPing(final ITCPSocketFactory socketFactory, final int connectTimeout, final int readTimeout, final int protocolVersion) {
         this.socketFactory = socketFactory;
@@ -38,7 +39,14 @@ public abstract class ATCPPing extends APing {
      * @throws ConnectionRefusedException If the connection was refused
      */
     protected final ITCPSocket connect(final ServerAddress serverAddress) throws IOException {
-        return this.socketFactory.create(serverAddress, this.connectTimeout, this.readTimeout);
+        this.socket = this.socketFactory.create(serverAddress, this.connectTimeout, this.readTimeout);
+        this.socket.connect();
+        return this.socket;
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (this.socket != null) this.socket.close();
     }
 
     /**

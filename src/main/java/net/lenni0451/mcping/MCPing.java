@@ -381,20 +381,27 @@ public class MCPing<R extends IPingResponse> {
 
     private class MCPingFuture extends CompletableFuture<R> {
         private final Thread thread;
+        private APing ping;
 
         MCPingFuture() {
             this.thread = new Thread(() -> {
                 if (MCPing.this.resolve) MCPing.this.address.resolve();
-                MCPing.this.ping.apply(MCPing.this).ping(MCPing.this.address, new StatusListener(this));
+                this.ping = MCPing.this.ping.apply(MCPing.this);
+                this.ping.ping(MCPing.this.address, new StatusListener(this));
             }, "MCPing Thread");
             this.thread.setDaemon(true);
             this.thread.start();
         }
 
-        @SuppressWarnings("deprecation")
         @Override
         public boolean cancel(boolean mayInterruptIfRunning) {
-            if (mayInterruptIfRunning) this.thread.stop();
+            if (mayInterruptIfRunning) {
+                try {
+                    this.ping.close();
+                } catch (Throwable ignored) {
+                }
+                this.thread.interrupt();
+            }
             return super.cancel(mayInterruptIfRunning);
         }
     }

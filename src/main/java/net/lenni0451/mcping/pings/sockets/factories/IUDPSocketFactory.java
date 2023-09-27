@@ -11,13 +11,14 @@ import java.io.IOException;
 public interface IUDPSocketFactory {
 
     /**
-     * Create a new {@link IUDPSocket} instance.
+     * Create a new {@link IUDPSocket} instance.<br>
+     * The socket should not be connected yet.
      *
      * @param serverAddress The server address to connect to
      * @param readTimeout   The read timeout
      * @return The connected socket
      * @throws IOException If an I/O error occurs
      */
-    IUDPSocket create(final ServerAddress serverAddress, final int readTimeout) throws IOException;
+    IUDPSocket create(final ServerAddress serverAddress, final int readTimeout);
 
 }
