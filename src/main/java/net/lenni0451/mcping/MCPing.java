@@ -370,37 +370,40 @@ public class MCPing<R extends IPingResponse> {
      * @return The future
      */
     public Future<R> getAsync(final ExecutorService executor) {
-        return executor.submit(() -> {
-            CompletableFuture<R> future = new CompletableFuture<>();
-            if (this.resolve) this.address.resolve();
-            this.ping.apply(this).ping(this.address, new StatusListener(future));
-            return future.get();
-        });
+        return new MCPingFuture(executor);
     }
 
 
     private class MCPingFuture extends CompletableFuture<R> {
+        private final Runnable task = () -> {
+            if (MCPing.this.resolve) MCPing.this.address.resolve();
+            this.ping = MCPing.this.ping.apply(MCPing.this);
+            this.ping.ping(MCPing.this.address, new StatusListener(this));
+        };
         private final Thread thread;
+        private final Future<R> future;
         private APing ping;
 
         private MCPingFuture() {
-            this.thread = new Thread(() -> {
-                if (MCPing.this.resolve) MCPing.this.address.resolve();
-                this.ping = MCPing.this.ping.apply(MCPing.this);
-                this.ping.ping(MCPing.this.address, new StatusListener(this));
-            }, "MCPing Thread");
+            this.thread = new Thread(this.task, "MCPing Thread");
+            this.future = null;
+
             this.thread.setDaemon(true);
             this.thread.start();
         }
 
+        private MCPingFuture(final ExecutorService executor) {
+            this.thread = null;
+            this.future = (Future<R>) executor.submit(this.task);
+        }
+
         @Override
         public boolean cancel(boolean mayInterruptIfRunning) {
-            if (mayInterruptIfRunning) {
-                this.thread.interrupt();
-                try {
-                    this.ping.close();
-                } catch (Throwable ignored) {
-                }
+            if (this.future != null) this.future.cancel(mayInterruptIfRunning);
+            if (this.thread != null) this.thread.interrupt();
+            try {
+                this.ping.close();
+            } catch (Throwable ignored) {
             }
             return super.cancel(mayInterruptIfRunning);
         }
