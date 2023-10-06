@@ -383,7 +383,7 @@ public class MCPing<R extends IPingResponse> {
         private final Thread thread;
         private APing ping;
 
-        MCPingFuture() {
+        private MCPingFuture() {
             this.thread = new Thread(() -> {
                 if (MCPing.this.resolve) MCPing.this.address.resolve();
                 this.ping = MCPing.this.ping.apply(MCPing.this);
@@ -409,7 +409,7 @@ public class MCPing<R extends IPingResponse> {
     private class StatusListener implements IStatusListener {
         private final CompletableFuture<R> future;
 
-        StatusListener(final CompletableFuture<R> future) {
+        private StatusListener(final CompletableFuture<R> future) {
             this.future = future;
         }
 
@@ -422,6 +422,7 @@ public class MCPing<R extends IPingResponse> {
 
         @Override
         public void onConnected() {
+            if (MCPing.this.statusListener != null) MCPing.this.statusListener.onConnected();
             if (MCPing.this.connectedHandler != null) MCPing.this.connectedHandler.run();
         }
 
