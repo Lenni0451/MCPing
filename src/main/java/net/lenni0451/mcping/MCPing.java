@@ -143,6 +143,13 @@ public class MCPing<R extends IPingResponse> {
         this.ping = ping;
     }
 
+    private void validate() {
+        if (this.ping == null) throw new NullPointerException("Ping cannot be null");
+        if (this.tcpSocketFactory == null) throw new NullPointerException("TCP Socket Factory cannot be null");
+        if (this.udpSocketFactory == null) throw new NullPointerException("UDP Socket Factory cannot be null");
+        if (this.address == null) throw new NullPointerException("Address cannot be null");
+    }
+
     /**
      * Set the used tcp socket factory.<br>
      * Defaults to {@link TCPSocketFactory} which uses {@link java.net.Socket} as the socket implementation.
@@ -340,6 +347,7 @@ public class MCPing<R extends IPingResponse> {
      * @throws RuntimeException If no status listener or exception handler is set and an exception occurs
      */
     public R getSync() {
+        this.validate();
         CompletableFuture<R> future = new CompletableFuture<>();
         if (this.resolve) this.address.resolve();
         this.ping.apply(this).ping(this.address, new StatusListener(future));
@@ -359,6 +367,7 @@ public class MCPing<R extends IPingResponse> {
      * @return The completable future
      */
     public CompletableFuture<R> getAsync() {
+        this.validate();
         return new MCPingFuture();
     }
 
@@ -370,6 +379,7 @@ public class MCPing<R extends IPingResponse> {
      * @return The future
      */
     public Future<R> getAsync(final ExecutorService executor) {
+        this.validate();
         return new MCPingFuture(executor);
     }
 
