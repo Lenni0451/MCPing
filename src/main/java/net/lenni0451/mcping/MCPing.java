@@ -385,11 +385,8 @@ public class MCPing<R extends IPingResponse> {
         private APing ping;
 
         private MCPingFuture() {
-            this.thread = new Thread(this.task, "MCPing Thread");
+            this.thread = ThreadLauncher.startThread(this.task, "MCPing Thread");
             this.future = null;
-
-            this.thread.setDaemon(true);
-            this.thread.start();
         }
 
         private MCPingFuture(final ExecutorService executor) {
