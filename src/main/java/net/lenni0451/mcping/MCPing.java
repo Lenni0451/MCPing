@@ -396,11 +396,11 @@ public class MCPing<R extends IPingResponse> {
         @Override
         public boolean cancel(boolean mayInterruptIfRunning) {
             if (mayInterruptIfRunning) {
+                this.thread.interrupt();
                 try {
                     this.ping.close();
                 } catch (Throwable ignored) {
                 }
-                this.thread.interrupt();
             }
             return super.cancel(mayInterruptIfRunning);
         }
