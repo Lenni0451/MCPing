@@ -18,6 +18,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 
 /**
@@ -55,9 +56,17 @@ public class ModernPing extends ATCPPing {
                     packetOs.writeShort(serverAddress.getUnresolvedPort());
                 } else { // >= 1.17.1
                     // Minecraft >= 1.17.1 sends the host and port from the resolved inet socket address
-                    InetSocketAddress address = serverAddress.toInetSocketAddress();
-                    packetOs.writeVarString(address.getHostName());
-                    packetOs.writeShort(address.getPort());
+                    SocketAddress socketAddress = serverAddress.getSocketAddress();
+                    if (socketAddress instanceof InetSocketAddress) {
+                        InetSocketAddress inetSocketAddress = (InetSocketAddress) socketAddress;
+                        packetOs.writeVarString(inetSocketAddress.getHostName());
+                        packetOs.writeShort(inetSocketAddress.getPort());
+                    } else {
+                        //If the socket address is not an InetSocketAddress we just send the host and port
+                        //This writes socketAddress.toString() as the host and 0 as the port
+                        packetOs.writeVarString(serverAddress.getHost());
+                        packetOs.writeShort(serverAddress.getPort());
+                    }
                 }
                 packetOs.writeVarInt(1);
             });

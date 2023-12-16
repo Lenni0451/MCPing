@@ -35,7 +35,7 @@ public class TCPSocket implements ITCPSocket {
         try {
             this.socket = new Socket();
             this.socket.setSoTimeout(readTimeout);
-            this.socket.connect(this.serverAddress.toInetSocketAddress(), this.connectTimeout);
+            this.socket.connect(this.serverAddress.getSocketAddress(), this.connectTimeout);
 
             this.inputStream = this.socket.getInputStream();
             this.outputStream = this.socket.getOutputStream();

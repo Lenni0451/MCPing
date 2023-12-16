@@ -32,7 +32,7 @@ public class UDPSocket implements IUDPSocket {
 
     @Override
     public void send(byte[] data) throws IOException {
-        DatagramPacket packet = new DatagramPacket(data, data.length, this.serverAddress.toInetSocketAddress());
+        DatagramPacket packet = new DatagramPacket(data, data.length, this.serverAddress.getSocketAddress());
         this.socket.send(packet);
     }
 

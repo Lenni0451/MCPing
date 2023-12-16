@@ -213,18 +213,14 @@ public class MCPing<R extends IPingResponse> {
     /**
      * Set the address of the server to ping.<br>
      * If the address is an {@link InetSocketAddress} the host and port will be used.<br>
-     * Otherwise, the address will be parsed using {@link ServerAddress#parse(String, int)}.
+     * Otherwise, the address will be wrapped and used as is.
      *
      * @param address The socket address
      * @return This builder
      */
     public MCPing<R> address(final SocketAddress address) {
-        if (address instanceof InetSocketAddress) {
-            InetSocketAddress socketAddress = (InetSocketAddress) address;
-            return this.address(socketAddress.getHostString(), socketAddress.getPort());
-        } else {
-            return this.address(address.toString());
-        }
+        this.address = ServerAddress.wrap(address, this.ping.apply(this).getDefaultPort());
+        return this;
     }
 
     /**

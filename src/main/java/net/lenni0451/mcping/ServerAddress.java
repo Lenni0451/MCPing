@@ -5,6 +5,7 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.Hashtable;
 import java.util.regex.Pattern;
 
@@ -23,6 +24,23 @@ public class ServerAddress {
      */
     public static ServerAddress of(final String host, final int port, final int defaultPort) {
         return new ServerAddress(host, port, defaultPort);
+    }
+
+    /**
+     * Wrap a {@link SocketAddress} into a server address.<br>
+     * If the socket address is an {@link InetSocketAddress} the host and port will be resolved.
+     *
+     * @param socketAddress The socket address to wrap
+     * @param defaultPort   The default port of the ping protocol
+     * @return The server address
+     */
+    public static ServerAddress wrap(final SocketAddress socketAddress, final int defaultPort) {
+        if (socketAddress instanceof InetSocketAddress) {
+            InetSocketAddress inetSocketAddress = (InetSocketAddress) socketAddress;
+            return of(inetSocketAddress.getHostString(), inetSocketAddress.getPort(), defaultPort);
+        } else {
+            return new ServerAddress(socketAddress, defaultPort);
+        }
     }
 
     /**
@@ -59,6 +77,7 @@ public class ServerAddress {
     private int port;
     private final int defaultPort;
     private boolean resolved;
+    private SocketAddress socketAddress;
 
     private ServerAddress(final String host, final int port, final int defaultPort) {
         this.unresolvedHost = host;
@@ -66,6 +85,14 @@ public class ServerAddress {
         this.host = host;
         this.port = port;
         this.defaultPort = defaultPort;
+    }
+
+    private ServerAddress(final SocketAddress socketAddress, final int defaultPort) {
+        this.socketAddress = socketAddress;
+        this.unresolvedHost = this.host = socketAddress.toString();
+        this.unresolvedPort = this.port = 0;
+        this.defaultPort = defaultPort;
+        this.resolved = true;
     }
 
     /**
@@ -111,12 +138,14 @@ public class ServerAddress {
     }
 
     /**
-     * Get an {@link InetSocketAddress} from this server address.
+     * Get a {@link SocketAddress} from this server address.<br>
+     * Returns the wrapped socket address if it is not null.
      *
-     * @return The InetSocketAddress
+     * @return The SocketAddress
      */
-    public InetSocketAddress toInetSocketAddress() {
-        return new InetSocketAddress(this.host, this.port);
+    public SocketAddress getSocketAddress() {
+        if (this.socketAddress != null) return this.socketAddress;
+        else return new InetSocketAddress(this.host, this.port);
     }
 
     /**
