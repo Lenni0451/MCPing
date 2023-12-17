@@ -30,10 +30,14 @@ public class TCPSocket implements ITCPSocket {
         this.readTimeout = readTimeout;
     }
 
+    protected Socket newSocket() throws IOException {
+        return new Socket();
+    }
+
     @Override
     public void connect() throws IOException {
         try {
-            this.socket = new Socket();
+            this.socket = this.newSocket();
             this.socket.setSoTimeout(readTimeout);
             this.socket.connect(this.serverAddress.getSocketAddress(), this.connectTimeout);
 
