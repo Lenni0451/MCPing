@@ -5,13 +5,14 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.lenni0451.mcping.ServerAddress;
+import net.lenni0451.mcping.utils.LenientTypeAdapterFactory;
 
 /**
  * The abstract class used to implement a ping.
  */
 public abstract class APing implements AutoCloseable {
 
-    protected final Gson gson = new GsonBuilder().create();
+    protected final Gson gson = new GsonBuilder().registerTypeAdapterFactory(new LenientTypeAdapterFactory()).create();
 
     /**
      * @return The default port of this ping protocol
