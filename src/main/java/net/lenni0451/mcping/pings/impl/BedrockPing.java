@@ -42,7 +42,7 @@ public class BedrockPing extends AUDPPing {
             PingReference pingReference = new PingReference();
             this.writePacket(s, packetOs -> {
                 packetOs.writeByte(1);
-                packetOs.writeLong(System.currentTimeMillis());
+                packetOs.writeLong(System.nanoTime() / 1_000_000);
                 packetOs.write(RAKNET_UNCONNECTED_MAGIC);
                 packetOs.writeLong(sessionId);
 
