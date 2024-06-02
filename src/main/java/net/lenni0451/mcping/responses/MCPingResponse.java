@@ -4,6 +4,14 @@ import lombok.ToString;
 import net.lenni0451.mcping.pings.impl.LegacyPing;
 import net.lenni0451.mcping.pings.impl.ModernPing;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 /**
  * The response of a {@link ModernPing} and {@link LegacyPing}.
  */
@@ -77,6 +85,62 @@ public class MCPingResponse implements IPingResponse {
             public String version;
             public boolean required = false;
         }
+    }
+
+
+    @Nonnull
+    @Override
+    public String getAddress() {
+        return Optional.ofNullable(this.server).map(s -> s.ip).orElse("Unknown");
+    }
+
+    @Override
+    public int getPort() {
+        return Optional.ofNullable(this.server).map(s -> s.port).orElse(-1);
+    }
+
+    @Nonnull
+    @Override
+    public String getMotd() {
+        return Optional.ofNullable(this.description).orElse("Unknown");
+    }
+
+    @Nullable
+    @Override
+    public String getFavicon() {
+        return this.favicon;
+    }
+
+    @Override
+    public long getPing() {
+        return Optional.ofNullable(this.server).map(s -> s.ping).orElse(-1L);
+    }
+
+    @Override
+    public int getOnlinePlayers() {
+        return Optional.ofNullable(this.players).map(p -> p.online).orElse(-1);
+    }
+
+    @Override
+    public int getMaxPlayers() {
+        return Optional.ofNullable(this.players).map(p -> p.max).orElse(-1);
+    }
+
+    @Nonnull
+    @Override
+    public String getVersionName() {
+        return Optional.ofNullable(this.version).map(v -> v.name).orElse("Unknown");
+    }
+
+    @Override
+    public int getProtocolId() {
+        return Optional.ofNullable(this.version).map(v -> v.protocol).orElse(-1);
+    }
+
+    @Nonnull
+    @Override
+    public List<String> getSample() {
+        return Optional.ofNullable(this.players).map(p -> p.sample).map(Arrays::asList).orElse(Collections.emptyList()).stream().map(p -> p.name).collect(Collectors.toList());
     }
 
 }

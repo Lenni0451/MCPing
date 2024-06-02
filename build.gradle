@@ -8,7 +8,7 @@ plugins {
 
 base {
     java.toolchain.languageVersion = JavaLanguageVersion.of(8)
-    compileJava.options.encoding = javadoc.options.encoding = "UTF-8"
+    compileJava.options.encoding = compileTestJava.options.encoding = javadoc.options.encoding = "UTF-8"
 
     archivesName = project.maven_name ?: rootProject.maven_name
     group = project.maven_group ?: rootProject.maven_group
@@ -22,6 +22,10 @@ repositories {
 dependencies {
     compileOnly "com.google.code.findbugs:jsr305:3.0.2"
     api "com.google.code.gson:gson:2.10.1"
+
+    testImplementation(platform("org.junit:junit-bom:5.10.2"))
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 }
 
 java {
@@ -36,6 +40,14 @@ sourcesJar {
 
 artifacts {
     archives javadocJar, sourcesJar
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+    maxParallelForks Runtime.runtime.availableProcessors()
 }
 
 publishing {
@@ -109,5 +121,7 @@ signing {
 
 project.tasks.withType(PublishToMavenRepository).forEach {
     it.dependsOn(project.tasks.withType(Sign))
+    it.dependsOn(test)
 }
+build.dependsOn(test)
 build.dependsOn(check)
