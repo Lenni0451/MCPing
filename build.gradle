@@ -2,14 +2,18 @@ plugins {
     id "java-library"
     id "maven-publish"
     id "signing"
+    id "checkstyle"
+    id "io.freefair.lombok" version "8.6"
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(8)
-compileJava.options.encoding = compileTestJava.options.encoding = javadoc.options.encoding = "UTF-8"
+base {
+    java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+    compileJava.options.encoding = javadoc.options.encoding = "UTF-8"
 
-archivesBaseName = project.maven_name
-group = project.maven_group
-version = project.maven_version
+    archivesName = project.maven_name ?: rootProject.maven_name
+    group = project.maven_group ?: rootProject.maven_group
+    version = project.maven_version ?: rootProject.maven_version
+}
 
 repositories {
     mavenCentral()
@@ -23,6 +27,11 @@ dependencies {
 java {
     withSourcesJar()
     withJavadocJar()
+}
+
+sourcesJar {
+    from delombok
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 artifacts {
@@ -56,20 +65,20 @@ publishing {
     }
     publications {
         maven(MavenPublication) {
-            artifactId = project.maven_name
-            groupId = project.maven_group
-            version = project.maven_version
+            artifactId = project.maven_name ?: rootProject.maven_name
+            groupId = rootProject.maven_group
+            version = rootProject.maven_version
 
             from components.java
 
             pom {
                 name = rootProject.name
-                description = "A simple library to ping minecraft servers"
-                url = "https://github.com/Lenni0451/MCPing"
+                description = rootProject.maven_description
+                url = "https://github.com/" + rootProject.github_repo
                 licenses {
                     license {
                         name = "MIT License"
-                        url = "https://github.com/Lenni0451/MCPing/blob/main/LICENSE"
+                        url = "https://github.com/" + rootProject.github_repo + "/blob/main/LICENSE"
                     }
                 }
                 developers {
@@ -78,16 +87,22 @@ publishing {
                     }
                 }
                 scm {
-                    connection = "scm:git:git://github.com/Lenni0451/MCPing.git"
-                    developerConnection = "scm:git:ssh://github.com/Lenni0451/MCPing.git"
-                    url = "github.com/Lenni0451/MCPing"
+                    connection = "scm:git:git://github.com/" + rootProject.github_repo + ".git"
+                    developerConnection = "scm:git:ssh://github.com/" + rootProject.github_repo + ".git"
+                    url = "github.com/" + rootProject.github_repo
                 }
             }
         }
     }
 }
 
+checkstyle {
+    toolVersion = "9.3" //Latest version for Java 8: 9.3
+    configFile = rootProject.file("config/checkstyle/checkstyle.xml")
+}
+
 signing {
+    setRequired false
     sign configurations.archives
     sign publishing.publications.maven
 }
@@ -95,3 +110,4 @@ signing {
 project.tasks.withType(PublishToMavenRepository).forEach {
     it.dependsOn(project.tasks.withType(Sign))
 }
+build.dependsOn(check)

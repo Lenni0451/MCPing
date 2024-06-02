@@ -34,15 +34,15 @@ public class TCPSocket implements ITCPSocket {
     public void connect() throws IOException {
         try {
             this.socket = new Socket();
-            this.socket.setSoTimeout(readTimeout);
+            this.socket.setSoTimeout(this.readTimeout);
             this.socket.connect(this.serverAddress.getSocketAddress(), this.connectTimeout);
 
             this.inputStream = this.socket.getInputStream();
             this.outputStream = this.socket.getOutputStream();
         } catch (ConnectException e) {
-            throw new ConnectionRefusedException(serverAddress);
+            throw new ConnectionRefusedException(this.serverAddress);
         } catch (SocketTimeoutException e) {
-            throw new ConnectTimeoutException(connectTimeout);
+            throw new ConnectTimeoutException(this.connectTimeout);
         }
     }
 

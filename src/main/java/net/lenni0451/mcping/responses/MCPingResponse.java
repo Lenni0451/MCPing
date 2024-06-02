@@ -1,13 +1,13 @@
 package net.lenni0451.mcping.responses;
 
+import lombok.ToString;
 import net.lenni0451.mcping.pings.impl.LegacyPing;
 import net.lenni0451.mcping.pings.impl.ModernPing;
-
-import java.util.Arrays;
 
 /**
  * The response of a {@link ModernPing} and {@link LegacyPing}.
  */
+@ToString
 public class MCPingResponse implements IPingResponse {
 
     public String description;
@@ -19,146 +19,63 @@ public class MCPingResponse implements IPingResponse {
     public ModInfo modinfo;
     public ForgeData forgeData;
 
-    @Override
-    public String toString() {
-        return "MCPingResponse{" +
-                "description='" + description + '\'' +
-                ", favicon='" + favicon + '\'' +
-                ", server=" + server +
-                ", previewsChat=" + previewsChat +
-                ", version=" + version +
-                ", players=" + players +
-                ", modInfo=" + modinfo +
-                ", forgeData=" + forgeData +
-                '}';
-    }
-
+    @ToString
     public static class Server {
         public String ip;
         public int port = -1;
         public int protocol = -1;
         public long ping = -1;
-
-        @Override
-        public String toString() {
-            return "Server{" +
-                    "ip='" + ip + '\'' +
-                    ", port=" + port +
-                    ", protocol=" + protocol +
-                    ", ping=" + ping +
-                    '}';
-        }
     }
 
+    @ToString
     public static class Version {
         public String name;
         public int protocol = -1;
-
-        @Override
-        public String toString() {
-            return "Version{" +
-                    "name='" + name + '\'' +
-                    ", protocol=" + protocol +
-                    '}';
-        }
     }
 
+    @ToString
     public static class Players {
         public int max = -1;
         public int online = -1;
         public Player[] sample = new Player[0];
 
-        @Override
-        public String toString() {
-            return "Players{" +
-                    "max=" + max +
-                    ", online=" + online +
-                    ", sample=" + Arrays.toString(sample) +
-                    '}';
-        }
-
+        @ToString
         public static class Player {
             public String name;
             public String id;
-
-            @Override
-            public String toString() {
-                return "Player{" +
-                        "name='" + name + '\'' +
-                        ", id='" + id + '\'' +
-                        '}';
-            }
         }
     }
 
+    @ToString
     public static class ModInfo {
         public String type;
         public Mod[] modList = new Mod[0];
 
-        @Override
-        public String toString() {
-            return "ModInfo{" +
-                    "type='" + type + '\'' +
-                    ", modList=" + Arrays.toString(modList) +
-                    '}';
-        }
-
+        @ToString
         public static class Mod {
             public String modid;
             public String version;
-
-            @Override
-            public String toString() {
-                return "Mod{" +
-                        "modid='" + modid + '\'' +
-                        ", version='" + version + '\'' +
-                        '}';
-            }
         }
     }
 
+    @ToString
     public static class ForgeData {
         public int fmlNetworkVersion = -1;
         public boolean truncated = false;
         public Mod[] mods = new Mod[0];
         public Channel[] channels = new Channel[0];
 
-        @Override
-        public String toString() {
-            return "ForgeData{" +
-                    "fmlNetworkVersion=" + fmlNetworkVersion +
-                    ", truncated=" + truncated +
-                    ", mods=" + Arrays.toString(mods) +
-                    ", channels=" + Arrays.toString(channels) +
-                    '}';
-        }
-
+        @ToString
         public static class Mod {
             public String modId;
             public String modmarker;
-
-            @Override
-            public String toString() {
-                return "Mod{" +
-                        "modId='" + modId + '\'' +
-                        ", modmarker='" + modmarker + '\'' +
-                        '}';
-            }
         }
 
+        @ToString
         public static class Channel {
             public String res;
             public String version;
             public boolean required = false;
-
-            @Override
-            public String toString() {
-                return "Channel{" +
-                        "res='" + res + '\'' +
-                        ", version='" + version + '\'' +
-                        ", required=" + required +
-                        '}';
-            }
         }
     }
 
