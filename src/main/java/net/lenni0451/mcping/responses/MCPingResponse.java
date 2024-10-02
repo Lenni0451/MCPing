@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class MCPingResponse implements IPingResponse {
 
     public String description;
+    public DescriptionType descriptionType;
     public String favicon;
     public Server server;
     public Boolean previewsChat;

@@ -15,6 +15,7 @@ import java.util.Optional;
 public class QueryPingResponse implements IPingResponse {
 
     public String description;
+    public DescriptionType descriptionType;
     public String gameType;
     public String map;
     public String gameId;

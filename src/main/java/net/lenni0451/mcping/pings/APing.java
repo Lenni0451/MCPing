@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.lenni0451.mcping.ServerAddress;
+import net.lenni0451.mcping.responses.DescriptionType;
 import net.lenni0451.mcping.utils.LenientTypeAdapterFactory;
 
 /**
@@ -43,9 +44,14 @@ public abstract class APing implements AutoCloseable {
         server.addProperty("protocol", protocolVersion);
         response.add("server", server);
 
-        if (response.has("description") && !response.get("description").isJsonPrimitive()) {
-            JsonElement description = response.get("description");
-            response.addProperty("description", this.gson.toJson(description));
+        if (response.has("description")) {
+            if (response.get("description").isJsonPrimitive()) {
+                response.addProperty("descriptionType", DescriptionType.STRING.name());
+            } else {
+                JsonElement description = response.get("description");
+                response.addProperty("description", this.gson.toJson(description));
+                response.addProperty("descriptionType", DescriptionType.JSON.name());
+            }
         }
     }
 
