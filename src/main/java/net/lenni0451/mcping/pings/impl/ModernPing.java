@@ -1,5 +1,6 @@
 package net.lenni0451.mcping.pings.impl;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.lenni0451.mcping.ServerAddress;
@@ -76,6 +77,7 @@ public class ModernPing extends ATCPPing {
                 String rawResponse = packetIs.readVarString(32767);
                 JsonObject parsedResponse = JsonParser.parseString(rawResponse).getAsJsonObject();
                 this.prepareResponse(serverAddress, parsedResponse);
+                this.parseEncodedForgeData(parsedResponse);
                 pingResponse[0] = this.gson.fromJson(parsedResponse, MCPingResponse.class);
                 statusListener.onResponse(pingResponse[0]);
             });
@@ -118,6 +120,67 @@ public class ModernPing extends ATCPPing {
             packetReader.read(packetIs);
         } catch (SocketTimeoutException e) {
             throw new ReadTimeoutException(this.readTimeout);
+        }
+    }
+
+    private void parseEncodedForgeData(final JsonObject object) throws IOException {
+        if (!object.has("forgeData")) return;
+        JsonObject forgeData = object.getAsJsonObject("forgeData");
+        if (!forgeData.has("d") || !forgeData.get("d").isJsonPrimitive()) return;
+
+        String d = forgeData.get("d").getAsString();
+        int size = d.charAt(0) | (d.charAt(1) << 15);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(size);
+        int buffer = 0;
+        int bufferBits = 0;
+        for (int i = 2; i < d.length(); i++) {
+            while (bufferBits >= 8) {
+                baos.write(buffer & 0xFF);
+                buffer >>>= 8;
+                bufferBits -= 8;
+            }
+            char c = d.charAt(i);
+            buffer |= (c & 0x7FFF) << bufferBits;
+            bufferBits += 15;
+        }
+        while (baos.size() < size) {
+            baos.write(buffer & 0xFF);
+            buffer >>>= 8;
+            bufferBits -= 8;
+        }
+
+        JsonArray newMods = new JsonArray();
+        JsonArray newChannels = new JsonArray();
+        MCInputStream dis = new MCInputStream(new ByteArrayInputStream(baos.toByteArray()));
+        forgeData.addProperty("truncated", dis.readBoolean());
+        forgeData.add("mods", newMods);
+        forgeData.add("channels", newChannels);
+        int modCount = dis.readUnsignedShort();
+        for (int i = 0; i < modCount; i++) {
+            int channelCountAndVersionFlag = dis.readVarInt();
+            int channelCount = channelCountAndVersionFlag >>> 1;
+            boolean isIgnoreServerOnly = (channelCountAndVersionFlag & 1) != 0;
+            String modId = dis.readVarString(Short.MAX_VALUE);
+            String modVersion = isIgnoreServerOnly ? "SERVER_ONLY" : dis.readVarString(Short.MAX_VALUE);
+            for (int j = 0; j < channelCount; j++) {
+                JsonObject channel = new JsonObject();
+                channel.addProperty("res", modId + ":" + dis.readVarString(Short.MAX_VALUE));
+                channel.addProperty("version", dis.readVarString(Short.MAX_VALUE));
+                channel.addProperty("required", dis.readBoolean());
+                newChannels.add(channel);
+            }
+            JsonObject mod = new JsonObject();
+            mod.addProperty("modId", modId);
+            mod.addProperty("modmarker", modVersion);
+            newMods.add(mod);
+        }
+        int channelCount = dis.readVarInt();
+        for (int i = 0; i < channelCount; i++) {
+            JsonObject channel = new JsonObject();
+            channel.addProperty("res", dis.readVarString(Short.MAX_VALUE));
+            channel.addProperty("version", dis.readVarString(Short.MAX_VALUE));
+            channel.addProperty("required", dis.readBoolean());
+            newChannels.add(channel);
         }
     }
 
