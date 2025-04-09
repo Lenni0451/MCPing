@@ -86,7 +86,10 @@ public class ModernPing extends ATCPPing {
                 this.parseEncodedForgeData(parsedResponse);
                 pingResponse[0] = this.gson.fromJson(parsedResponse, MCPingResponse.class);
                 statusListener.onResponse(pingResponse[0]);
-                if (this.skipPing) statusListener.onPing(pingResponse[0], pingReference.get());
+                if (this.skipPing) {
+                    pingResponse[0].server.ping = pingReference.get();
+                    statusListener.onPing(pingResponse[0], pingReference.get());
+                }
             });
             if (!this.skipPing) {
                 this.writePacket(os, 1, packetOs -> {

@@ -46,7 +46,7 @@ public class MCPing<R extends IPingResponse> {
      * Ping a server using the modern ping protocol.
      *
      * @param protocolVersion The protocol version to use
-     * @param skipPing        Whether to ping the server or not
+     * @param skipPing        Whether to ping the server or not. The status packet will be used instead (less accurate, but faster).
      * @return The modern ping builder
      */
     public static MCPing<MCPingResponse> pingModern(final int protocolVersion, final boolean skipPing) {
