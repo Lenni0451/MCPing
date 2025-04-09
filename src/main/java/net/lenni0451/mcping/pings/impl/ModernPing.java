@@ -28,8 +28,11 @@ import java.net.SocketTimeoutException;
  */
 public class ModernPing extends ATCPPing {
 
-    public ModernPing(final ITCPSocketFactory socketFactory, final int connectTimeout, final int readTimeout, final int protocolVersion) {
+    private final boolean skipPing;
+
+    public ModernPing(final ITCPSocketFactory socketFactory, final int connectTimeout, final int readTimeout, final int protocolVersion, final boolean skipPing) {
         super(socketFactory, connectTimeout, readTimeout, protocolVersion);
+        this.skipPing = skipPing;
     }
 
     @Override
@@ -44,6 +47,7 @@ public class ModernPing extends ATCPPing {
             MCOutputStream os = new MCOutputStream(s.getOutputStream());
             statusListener.onConnected();
 
+            PingReference pingReference = new PingReference();
             MCPingResponse[] pingResponse = new MCPingResponse[1];
             this.writePacket(os, 0, packetOs -> {
                 packetOs.writeVarInt(this.protocolVersion);
@@ -72,25 +76,29 @@ public class ModernPing extends ATCPPing {
                 packetOs.writeVarInt(1);
             });
             this.writePacket(os, 0, packetOs -> {
+                if (this.skipPing) pingReference.start();
             });
             this.readPacket(is, 0, packetIs -> {
+                if (this.skipPing) pingReference.stop();
                 String rawResponse = packetIs.readVarString(32767);
                 JsonObject parsedResponse = JsonParser.parseString(rawResponse).getAsJsonObject();
                 this.prepareResponse(serverAddress, parsedResponse);
                 this.parseEncodedForgeData(parsedResponse);
                 pingResponse[0] = this.gson.fromJson(parsedResponse, MCPingResponse.class);
                 statusListener.onResponse(pingResponse[0]);
+                if (this.skipPing) statusListener.onPing(pingResponse[0], pingReference.get());
             });
-            PingReference pingReference = new PingReference();
-            this.writePacket(os, 1, packetOs -> {
-                packetOs.writeLong(pingReference.startAndGet());
-            });
-            this.readPacket(is, 1, packetIs -> {
-                pingReference.stop();
+            if (!this.skipPing) {
+                this.writePacket(os, 1, packetOs -> {
+                    packetOs.writeLong(pingReference.startAndGet());
+                });
+                this.readPacket(is, 1, packetIs -> {
+                    pingReference.stop();
 
-                pingResponse[0].server.ping = pingReference.get();
-                statusListener.onPing(pingResponse[0], pingReference.get());
-            });
+                    pingResponse[0].server.ping = pingReference.get();
+                    statusListener.onPing(pingResponse[0], pingReference.get());
+                });
+            }
         } catch (Throwable t) {
             statusListener.onError(t);
         }
