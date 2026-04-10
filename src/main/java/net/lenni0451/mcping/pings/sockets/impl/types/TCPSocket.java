@@ -5,6 +5,7 @@ import net.lenni0451.mcping.exception.ConnectTimeoutException;
 import net.lenni0451.mcping.exception.ConnectionRefusedException;
 import net.lenni0451.mcping.pings.sockets.types.ITCPSocket;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -39,7 +40,7 @@ public class TCPSocket implements ITCPSocket {
             this.socket.connect(this.serverAddress.getSocketAddress(), this.connectTimeout);
 
             this.inputStream = this.socket.getInputStream();
-            this.outputStream = this.socket.getOutputStream();
+            this.outputStream = new BufferedOutputStream(this.socket.getOutputStream());
         } catch (ConnectException e) {
             throw new ConnectionRefusedException(this.serverAddress);
         } catch (SocketTimeoutException e) {

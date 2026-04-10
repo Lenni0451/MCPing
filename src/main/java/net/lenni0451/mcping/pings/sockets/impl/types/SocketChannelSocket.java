@@ -7,6 +7,7 @@ import net.lenni0451.mcping.pings.sockets.types.ITCPSocket;
 import net.lenni0451.mcping.stream.SocketChannelInputStream;
 import net.lenni0451.mcping.stream.SocketChannelOutputStream;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -59,7 +60,7 @@ public class SocketChannelSocket implements ITCPSocket {
         }
         this.socketChannel.configureBlocking(false);
         this.inputStream = new SocketChannelInputStream(this.socketChannel, this.readTimeout);
-        this.outputStream = new SocketChannelOutputStream(this.socketChannel);
+        this.outputStream = new BufferedOutputStream(new SocketChannelOutputStream(this.socketChannel));
     }
 
     @Override
