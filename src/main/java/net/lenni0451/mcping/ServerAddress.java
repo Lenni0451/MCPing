@@ -89,8 +89,10 @@ public class ServerAddress {
 
     private ServerAddress(final SocketAddress socketAddress, final int defaultPort) {
         this.socketAddress = socketAddress;
-        this.unresolvedHost = this.host = socketAddress.toString();
-        this.unresolvedPort = this.port = 0;
+        this.unresolvedHost = socketAddress.toString();
+        this.host = this.unresolvedHost;
+        this.unresolvedPort = 0;
+        this.port = this.unresolvedPort;
         this.defaultPort = defaultPort;
         this.resolved = true;
     }
