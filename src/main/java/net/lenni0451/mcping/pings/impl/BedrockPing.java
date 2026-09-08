@@ -30,7 +30,7 @@ public class BedrockPing extends AUDPPing {
 
     @Override
     public int getDefaultPort() {
-        return 19132;
+        return ServerAddress.DEFAULT_BEDROCK_PORT;
     }
 
     @Override

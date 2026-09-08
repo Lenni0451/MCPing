@@ -35,7 +35,7 @@ public class QueryPing extends AUDPPing {
 
     @Override
     public int getDefaultPort() {
-        return 25565;
+        return ServerAddress.DEFAULT_JAVA_PORT;
     }
 
     @Override
