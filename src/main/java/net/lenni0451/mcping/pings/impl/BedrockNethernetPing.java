@@ -36,8 +36,7 @@ public class BedrockNethernetPing extends APing {
         @Override
         @SneakyThrows
         public SSLSocketFactory get() {
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, new TrustManager[]{new X509TrustManager() {
+            X509TrustManager trustManager = new X509TrustManager() {
                 @Override
                 public X509Certificate[] getAcceptedIssuers() {
                     return new X509Certificate[0];
@@ -50,7 +49,9 @@ public class BedrockNethernetPing extends APing {
                 @Override
                 public void checkServerTrusted(X509Certificate[] certs, String authType) {
                 }
-            }}, new SecureRandom());
+            };
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, new TrustManager[]{trustManager}, new SecureRandom());
             return sslContext.getSocketFactory();
         }
     }.get();
