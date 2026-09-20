@@ -304,6 +304,19 @@ public class MCPing<R extends IPingResponse> {
      * Set the connect and read timeout.<br>
      * Not all ping implementations require both timeouts.
      *
+     * @param timeout The timeout
+     * @return This builder
+     */
+    public MCPing<R> timeout(final int timeout) {
+        this.connectTimeout = timeout;
+        this.readTimeout = timeout;
+        return this;
+    }
+
+    /**
+     * Set the connect and read timeout.<br>
+     * Not all ping implementations require both timeouts.
+     *
      * @param connectTimeout The connect timeout
      * @param readTimeout    The read timeout
      * @return This builder
