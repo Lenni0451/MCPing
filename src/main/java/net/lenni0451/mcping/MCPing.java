@@ -8,6 +8,7 @@ import net.lenni0451.mcping.pings.sockets.factories.IUDPSocketFactory;
 import net.lenni0451.mcping.pings.sockets.impl.factories.TCPSocketFactory;
 import net.lenni0451.mcping.pings.sockets.impl.factories.UDPSocketFactory;
 import net.lenni0451.mcping.responses.*;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -116,11 +117,45 @@ public class MCPing<R extends IPingResponse> {
 
 
     /**
-     * Ping a server using the bedrock protocol.<br>
+     * Ping a server using the bedrock raknet protocol.<br>
      * Resolving the address is disabled by default.
      *
      * @return The bedrock ping builder
      */
+    public static MCPing<BedrockRaknetPingResponse> pingBedrockRaknet() {
+        return new MCPing<BedrockRaknetPingResponse>(ping -> new BedrockRaknetPing(ping.udpSocketFactory, ping.readTimeout)).noResolve();
+    }
+
+    /**
+     * Ping a server using the bedrock nethernet protocol.<br>
+     * Resolving the address is disabled by default.
+     *
+     * @return The bedrock ping builder
+     */
+    public static MCPing<BedrockNethernetPingResponse> pingBedrockNethernet() {
+        return pingBedrockNethernet(BedrockNethernetPing.Mode.AUTO);
+    }
+
+    /**
+     * Ping a server using the bedrock nethernet protocol.<br>
+     * Resolving the address is disabled by default.
+     *
+     * @param mode The HTTP/HTTPS mode to use
+     * @return The bedrock ping builder
+     */
+    public static MCPing<BedrockNethernetPingResponse> pingBedrockNethernet(final BedrockNethernetPing.Mode mode) {
+        return new MCPing<BedrockNethernetPingResponse>(ping -> new BedrockNethernetPing(ping.connectTimeout, ping.readTimeout, mode)).noResolve();
+    }
+
+    /**
+     * Ping a server using the bedrock protocol.<br>
+     * Resolving the address is disabled by default.
+     *
+     * @return The bedrock ping builder
+     * @deprecated Use {@link #pingBedrockRaknet()} instead
+     */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval
     public static MCPing<BedrockPingResponse> pingBedrock() {
         return new MCPing<BedrockPingResponse>(ping -> new BedrockPing(ping.udpSocketFactory, ping.readTimeout)).noResolve();
     }

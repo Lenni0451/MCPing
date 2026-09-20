@@ -34,7 +34,8 @@ Implemented ping protocols:
 - Modern (>= 1.7)
 - Legacy (<= 1.6)
 - Classic
-- Bedrock
+- Bedrock Raknet
+- Bedrock Nethernet
 - Query (default/full)
 - Socket
 

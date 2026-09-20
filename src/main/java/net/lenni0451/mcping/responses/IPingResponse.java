@@ -14,7 +14,7 @@ public interface IPingResponse {
     /**
      * Get the address of the server.<br>
      * <br>
-     * Implemented: {@link MCPingResponse}, {@link ClassicPingResponse}, {@link BedrockPingResponse}, {@link QueryPingResponse}, {@link SocketPingResponse}<br>
+     * Implemented: {@link MCPingResponse}, {@link ClassicPingResponse}, {@link BedrockRaknetPingResponse}, {@link BedrockNethernetPingResponse}, {@link QueryPingResponse}, {@link SocketPingResponse}<br>
      * Default: {@code "Unknown"}
      *
      * @return The address
@@ -27,7 +27,7 @@ public interface IPingResponse {
     /**
      * Get the port of the server.<br>
      * <br>
-     * Implemented: {@link MCPingResponse}, {@link ClassicPingResponse}, {@link BedrockPingResponse}, {@link QueryPingResponse}, {@link SocketPingResponse}<br>
+     * Implemented: {@link MCPingResponse}, {@link ClassicPingResponse}, {@link BedrockRaknetPingResponse}, {@link BedrockNethernetPingResponse}, {@link QueryPingResponse}, {@link SocketPingResponse}<br>
      * Default: {@code -1}
      *
      * @return The port
@@ -40,7 +40,7 @@ public interface IPingResponse {
      * Get the MOTD of the server.<br>
      * The MOTD <u>can</u> be a text component but is not guaranteed to be one.<br>
      * <br>
-     * Implemented: {@link MCPingResponse}, {@link ClassicPingResponse}, {@link BedrockPingResponse}, {@link QueryPingResponse}<br>
+     * Implemented: {@link MCPingResponse}, {@link ClassicPingResponse}, {@link BedrockRaknetPingResponse}, {@link BedrockNethernetPingResponse}, {@link QueryPingResponse}<br>
      * Default: {@code "Unknown"}
      *
      * @return The MOTD
@@ -67,7 +67,7 @@ public interface IPingResponse {
     /**
      * Get the ping to the server in milliseconds.<br>
      * <br>
-     * Implemented: {@link MCPingResponse}, {@link ClassicPingResponse}, {@link BedrockPingResponse}, {@link QueryPingResponse}, {@link SocketPingResponse}<br>
+     * Implemented: {@link MCPingResponse}, {@link ClassicPingResponse}, {@link BedrockRaknetPingResponse}, {@link BedrockNethernetPingResponse}, {@link QueryPingResponse}, {@link SocketPingResponse}<br>
      * Default: {@code -1}
      *
      * @return The ping
@@ -79,7 +79,7 @@ public interface IPingResponse {
     /**
      * Get the amount of players currently online on the server.<br>
      * <br>
-     * Implemented: {@link MCPingResponse}, {@link BedrockPingResponse}, {@link QueryPingResponse}<br>
+     * Implemented: {@link MCPingResponse}, {@link BedrockRaknetPingResponse}, {@link BedrockNethernetPingResponse}, {@link QueryPingResponse}<br>
      * Default: {@code -1}
      *
      * @return The amount of players
@@ -91,7 +91,7 @@ public interface IPingResponse {
     /**
      * Get the maximum amount of players that can be online on the server.<br>
      * <br>
-     * Implemented: {@link MCPingResponse}, {@link BedrockPingResponse}, {@link QueryPingResponse}<br>
+     * Implemented: {@link MCPingResponse}, {@link BedrockRaknetPingResponse}, {@link BedrockNethernetPingResponse}, {@link QueryPingResponse}<br>
      * Default: {@code -1}
      *
      * @return The maximum amount of players
@@ -103,7 +103,7 @@ public interface IPingResponse {
     /**
      * Get the version name of the server.<br>
      * <br>
-     * Implemented: {@link MCPingResponse}, {@link BedrockPingResponse}, {@link QueryPingResponse}<br>
+     * Implemented: {@link MCPingResponse}, {@link BedrockRaknetPingResponse}, {@link BedrockNethernetPingResponse}, {@link QueryPingResponse}<br>
      * Default: {@code "Unknown"}
      *
      * @return The version name
@@ -116,7 +116,7 @@ public interface IPingResponse {
     /**
      * Get the protocol id of the server.<br>
      * <br>
-     * Implemented: {@link MCPingResponse}, {@link ClassicPingResponse}, {@link BedrockPingResponse}, {@link QueryPingResponse}<br>
+     * Implemented: {@link MCPingResponse}, {@link ClassicPingResponse}, {@link BedrockRaknetPingResponse}, {@link BedrockNethernetPingResponse}, {@link QueryPingResponse}<br>
      * Default: {@code -1}
      *
      * @return The protocol id
@@ -128,10 +128,10 @@ public interface IPingResponse {
     /**
      * Get a sample of players on the server.<br>
      * The server can send any list of strings here, so it is not guaranteed to be valid player names.<br>
-     * Some implementations may return some general information about the server here (e.g. {@link BedrockPingResponse}).<br>
+     * Some implementations may return some general information about the server here (e.g. {@link BedrockRaknetPingResponse}, {@link BedrockNethernetPingResponse}).<br>
      * The list can be unmodifiable.<br>
      * <br>
-     * Implemented: {@link MCPingResponse}, {@link BedrockPingResponse}, {@link QueryPingResponse}<br>
+     * Implemented: {@link MCPingResponse}, {@link BedrockRaknetPingResponse}, {@link BedrockNethernetPingResponse}, {@link QueryPingResponse}<br>
      *
      * @return The sample players
      */
