@@ -25,6 +25,7 @@ public class MCPingResponse implements IPingResponse {
     public Boolean previewsChat;
     public Version version;
     public Players players;
+    public String contact;
     public ModInfo modinfo;
     public ForgeData forgeData;
 
